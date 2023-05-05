@@ -1,20 +1,155 @@
 <template>
-  <div>
-    <Card>
-      <template #title>Simple Card</template>
-      <template #content>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed consequuntur error repudiandae numquam
-          deserunt quisquam repellat libero asperiores earum nam nobis, culpa ratione quam perferendis esse, cupiditate
-          neque quas!
-        </p>
-      </template>
-    </Card>
+  <div class="container">
+    <div class="wrapper">
+      <div class="score">{{ score }}</div>
+      <div class="blisters-generate-wrapper" />
+      <div class="xh-send"></div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import Card from 'primevue/card';
+import { ref, onMounted } from 'vue';
+
+const score = ref<number>(0);
+
+onMounted(() => {
+  generateBlisters();
+});
+
+const generateBlisters = (): void => {
+  const wrapper = document.querySelector('.blisters-generate-wrapper') as HTMLDivElement;
+  for (let i = 0; i < 10; i++) {
+    let blistersEl = document.createElement('div') as HTMLDivElement;
+    const score = Math.floor(Math.random() * 10) + 1;
+    let textNode = document.createTextNode(`+${score}`);
+    blistersEl.setAttribute('score', score);
+    blistersEl.append(textNode);
+    blistersEl.classList.add('blisters');
+    const blistersDiameter: number = 50;
+    blistersEl.style.top = `${
+      Math.floor(Math.random() * (wrapper.clientWidth - blistersDiameter)) + blistersDiameter
+    }px`;
+    blistersEl.style.left = `${
+      Math.floor(Math.random() * (wrapper.clientWidth - blistersDiameter)) + blistersDiameter
+    }px`;
+    const delayTime = Math.floor(Math.random() * 2000);
+    blistersEl.style.animationDelay = `${delayTime}ms`;
+
+    wrapper.appendChild(blistersEl);
+  }
+
+  wrapper.addEventListener('click', e => {
+    if (e.target.classList.contains('blisters')) {
+      e.target.style.animationPlayState = 'running';
+      e.target.style.animationDuration = '2s';
+      e.target.style.animationDirection = 'reverse';
+      console.log(e.target.getAttribute('score'));
+      const score = Number(e.target.getAttribute('score'));
+      score.value += score;
+      setTimeout(() => {
+        e.target.remove();
+      }, 3000);
+    }
+  });
+};
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss">
+.container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  .wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: url(src/assets/home_images/background.png) no-repeat left top;
+    background-size: cover;
+
+    .score {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100px;
+      height: 100px;
+      line-height: 100px;
+      text-align: center;
+      color: blue;
+      font-size: 48px;
+      font-weight: bold;
+    }
+
+    .blisters-generate-wrapper {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 400px;
+      height: 400px;
+    }
+  }
+  .xh-send {
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    width: 10%;
+    height: 10%;
+    background: url(src/assets/home_images/xh_send.png) no-repeat left top;
+    background-size: contain;
+  }
+}
+</style>
+
+<style lang="scss">
+.blisters {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 50px;
+  font-size: 1.15rem;
+  font-weight: bold;
+  color: red;
+  box-shadow: inset 10px 10px 10px rgba(0, 0, 0, 0.5), 15px 25px 10px rgba(255, 255, 255, 0.05),
+    15px 20px 20px rgba(255, 255, 255, 0.05), inset -10px -10px 15px rgba(255, 255, 255, 0.9);
+  animation: blisters-show 2s ease forwards;
+  opacity: 0;
+  cursor: pointer;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #fff;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 6px;
+    left: 20px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #fff;
+  }
+
+  &:hover {
+    transform: scale(1.25);
+  }
+}
+
+@keyframes blisters-show {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+</style>

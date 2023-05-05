@@ -21,7 +21,6 @@ import { Header, Footer } from './components';
 
   .app-main {
     flex: 1;
-    padding: 20px;
   }
 }
 </style>

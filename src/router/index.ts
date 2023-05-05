@@ -12,6 +12,21 @@ const routes: Array<RouteRecordRaw> = [
         name: 'Home',
         component: () => import('@/views/home/index.vue'),
       },
+      {
+        path: 'apply',
+        name: 'Apply',
+        component: () => import('@/views/apply/index.vue'),
+      },
+      {
+        path: 'integral',
+        name: 'Integral',
+        component: () => import('@/views/integral/index.vue'),
+      },
+      {
+        path: 'portrait',
+        name: 'Portrait',
+        component: () => import('@/views/portrait/index.vue'),
+      },
     ],
   },
   {

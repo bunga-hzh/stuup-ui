@@ -8,7 +8,7 @@ interface RouterType {
 
 interface AsideRoutes {
   label: string;
-  path: string;
+  to: string;
   icon?: string;
   items?: Array<AsideRoutes>;
 }
@@ -20,15 +20,19 @@ export const usePermissionStore = defineStore(storeNames.PERMISSION, {
       asideRoutes: [
         {
           label: '首页',
-          path: '/home',
+          to: '/home',
+        },
+        {
+          label: '学分申请',
+          to: '/apply',
         },
         {
           label: '积分明细',
-          path: '/integral',
+          to: '/integral',
         },
         {
           label: '成长画像',
-          path: '/portrait',
+          to: '/portrait',
         },
       ],
     };

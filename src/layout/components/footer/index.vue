@@ -8,5 +8,7 @@
 .app-footer {
   height: 40px;
   line-height: 40px;
+  padding: 0 20px;
+  border-top: #eee solid 1px;
 }
 </style>
