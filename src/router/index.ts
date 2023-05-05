@@ -3,15 +3,14 @@ import Layout from '@/layout/index.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
+    path: '/home',
+    name: 'Home',
+    component: () => import('@/views/home/index.vue'),
+  },
+  {
     path: '/',
     component: Layout,
-    redirect: '/home',
     children: [
-      {
-        path: 'home',
-        name: 'Home',
-        component: () => import('@/views/home/index.vue'),
-      },
       {
         path: 'apply',
         name: 'Apply',

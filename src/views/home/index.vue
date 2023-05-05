@@ -1,9 +1,9 @@
 <template>
   <div class="container">
-    <div class="wrapper">
-      <div class="score">{{ score }}</div>
-      <div class="blisters-generate-wrapper" />
-      <div class="xh-send"></div>
+    <div class="score">{{ score }}</div>
+    <div class="blisters-generate-wrapper" />
+    <div class="xhh-seed">
+      <a href="#" @click="watering">浇水</a>
     </div>
   </div>
 </template>
@@ -16,6 +16,13 @@ const score = ref<number>(0);
 onMounted(() => {
   generateBlisters();
 });
+
+const watering = () => {
+  const container = document.querySelector('.container') as HTMLDivElement;
+  let grassEl = document.createElement('div') as HTMLDivElement;
+  grassEl.classList.add('xhh_sprout');
+  container.append(grassEl);
+};
 
 const generateBlisters = (): void => {
   const wrapper = document.querySelector('.blisters-generate-wrapper') as HTMLDivElement;
@@ -45,8 +52,6 @@ const generateBlisters = (): void => {
       e.target.style.animationDuration = '2s';
       e.target.style.animationDirection = 'reverse';
       console.log(e.target.getAttribute('score'));
-      const score = Number(e.target.getAttribute('score'));
-      score.value += score;
       setTimeout(() => {
         e.target.remove();
       }, 3000);
@@ -55,47 +60,33 @@ const generateBlisters = (): void => {
 };
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 .container {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  .wrapper {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    background: url(src/assets/home_images/background.png) no-repeat left top;
-    background-size: cover;
+  width: 100vw;
+  height: 100vh;
+  background: url(src/assets/home_images/background.png) no-repeat left top;
+  background-size: cover;
+  overflow: hidden;
 
-    .score {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100px;
-      height: 100px;
-      line-height: 100px;
-      text-align: center;
-      color: blue;
-      font-size: 48px;
-      font-weight: bold;
-    }
-
-    .blisters-generate-wrapper {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 400px;
-      height: 400px;
-    }
-  }
-  .xh-send {
+  .score {
     position: absolute;
-    top: 30%;
-    left: 50%;
-    width: 10%;
-    height: 10%;
-    background: url(src/assets/home_images/xh_send.png) no-repeat left top;
-    background-size: contain;
+    top: 0;
+    left: 0;
+    width: 100px;
+    height: 100px;
+    line-height: 100px;
+    text-align: center;
+    color: blue;
+    font-size: 48px;
+    font-weight: bold;
+  }
+
+  .blisters-generate-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 400px;
+    height: 400px;
   }
 }
 </style>
@@ -150,6 +141,47 @@ const generateBlisters = (): void => {
   }
   to {
     opacity: 1;
+  }
+}
+
+.xhh-seed {
+  position: fixed;
+  bottom: 20vh;
+  left: 26vw;
+  width: 10vw;
+  height: 10vh;
+  background: url(src/assets/home_images/xhh_seed.png) no-repeat left top;
+  background-size: contain;
+
+  > a {
+    opacity: 0;
+  }
+  &:hover {
+    transform: scale(1.05);
+
+    > a {
+      opacity: 1;
+    }
+  }
+}
+.xhh_sprout {
+  position: fixed;
+  bottom: 22vh;
+  left: 35vw;
+  width: 25vw;
+  height: 15vh;
+  background: url(src/assets/home_images/xhh_sprout.png) no-repeat left top;
+  background-size: contain;
+
+  > a {
+    opacity: 0;
+  }
+  &:hover {
+    transform: scale(1.05);
+
+    > a {
+      opacity: 1;
+    }
   }
 }
 </style>
