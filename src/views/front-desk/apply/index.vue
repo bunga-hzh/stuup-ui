@@ -1,5 +1,27 @@
 <template>
-  <a-card class="cm16">
+  <base-card>
+    <form class="apply-form">
+      <div class="mb-3">
+        <label for="formGroupExampleInput" class="form-label">申请标准</label>
+        <select
+          class="form-select"
+          aria-label="请选择申请标准"
+          v-model="form.standardId"
+          @change="handleStandardChange">
+          <option selected="selected" disabled="disabled" style="display: none" value="" />
+          <option v-for="item in standards" :key="item.id" :label="item.standardName" :value="item.id" />
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="formGroupExampleInput" class="form-label">申请项目</label>
+        <select class="form-select" aria-label="请选择申请项目" v-model="form.projectId">
+          <option selected="selected" disabled="disabled" style="display: none" value="" />
+          <option v-for="item in projects" :key="item.id" :label="item.projectName" :value="item.id" />
+        </select>
+      </div>
+    </form>
+  </base-card>
+  <!-- <a-card class="cm16">
     <div class="form-box">
       <a-form ref="form" class="form" :model="form" layout="vertical">
         <a-form-item field="standardId" label="申请标准">
@@ -26,7 +48,7 @@
         </a-form-item>
       </a-form>
     </div>
-  </a-card>
+  </a-card> -->
 </template>
 
 <script setup lang="ts">
@@ -89,13 +111,9 @@ const handleStandardChange = (value: number) => {
 </script>
 
 <style scoped lang="scss">
-.form-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  .form {
-    width: 50%;
-  }
+.apply-form {
+  width: 50%;
+  position: relative;
+  margin: 0 auto;
 }
 </style>

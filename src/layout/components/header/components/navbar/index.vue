@@ -1,0 +1,11 @@
+<template>
+  <Menu horizontal>
+    <v-menu-item :routes="premissionStore.getFrontAsideRoutes" />
+  </Menu>
+</template>
+
+<script setup lang="ts">
+import VMenuItem from '@/layout/components/VMenuItem/index.vue';
+import { usePermissionStore } from '@/store/modules/premission';
+const premissionStore = usePermissionStore();
+</script>

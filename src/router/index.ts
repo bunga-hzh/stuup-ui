@@ -1,37 +1,47 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
-import Layout from '@/layout/index.vue';
+import FrontLayout from '@/layout/front-layout.vue';
+import BackLayout from '@/layout/back-layout.vue';
 
-const routes: Array<RouteRecordRaw> = [
-  {
-    path: '/home',
-    name: 'Home',
-    component: () => import('@/views/home/index.vue'),
-  },
+const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    component: Layout,
+    component: FrontLayout,
+    redirect: '/home',
     children: [
       {
-        path: 'apply',
-        name: 'Apply',
-        component: () => import('@/views/apply/index.vue'),
+        path: 'home',
+        component: () => import('@/views/front-desk/home/index.vue'),
       },
-      {
-        path: 'integral',
-        name: 'Integral',
-        component: () => import('@/views/integral/index.vue'),
-      },
-      {
-        path: 'portrait',
-        name: 'Portrait',
-        component: () => import('@/views/portrait/index.vue'),
-      },
+      // {
+      //   path: 'apply',
+      //   component: () => import('@/views/front-desk/apply/index.vue'),
+      // },
+      // {
+      //   path: 'details',
+      //   component: () => import('@/views/front-desk/details/index.vue'),
+      // },
+      // {
+      //   path: 'portrait',
+      //   component: () => import('@/views/front-desk/portrait/index.vue'),
+      // },
     ],
   },
+  // {
+  //   path: '/',
+  //   component: BackLayout,
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       component: () => import('@/views/back-desk/dashboard/index.vue'),
+  //     },
+  //   ],
+  // },
   {
     path: '/login',
-    name: 'Login',
     component: () => import('@/views/login/index.vue'),
+    meta: {
+      menu: false,
+    },
   },
 ];
 

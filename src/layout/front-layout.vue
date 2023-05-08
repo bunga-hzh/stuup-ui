@@ -21,6 +21,8 @@ import { Header, Footer } from './components';
 
   .app-main {
     flex: 1;
+    background-color: #f2f3f5;
+    overflow-y: auto;
   }
 }
 </style>

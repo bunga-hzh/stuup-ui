@@ -1,20 +1,63 @@
 <template>
   <div class="app-header">
-    <a-menu mode="horizontal" :default-selected-keys="[$route.path]">
-      <router-link v-for="(route, index) in premissionStore.getAsideRoutes" :key="route.to" :to="route.to">
-        <a-menu-item :key="index">
-          {{ route.label }}
-        </a-menu-item>
-      </router-link>
-    </a-menu>
+    <div class="logo">
+      <img :src="logo" alt="Logo" width="194" height="38" />
+    </div>
+    <div class="navbar">
+      <Navbar />
+    </div>
+    <div class="navs">
+      <Space size="small" align="center">
+        <Avatar circle src="https://www.vexipui.com/qmhc.jpg" :size="50"></Avatar>
+        <Dropdown>
+          <Button text type="primary" :icon="ChevronDown">张三</Button>
+          <template #drop>
+            <DropdownList>
+              <DropdownItem>个人中心</DropdownItem>
+              <DropdownItem>退出登入</DropdownItem>
+            </DropdownList>
+          </template>
+        </Dropdown>
+      </Space>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { usePermissionStore } from '@/store/modules/premission';
 import logo from '@/assets/logo.png';
-
-const premissionStore = usePermissionStore();
+import { ChevronDown } from '@vexip-ui/icons';
+import Navbar from './components/navbar/index.vue';
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.app-header {
+  height: var(--header-height);
+  border: 1px solid #eee;
+  display: flex;
+
+  .logo {
+    width: 240px;
+    height: 100%;
+    display: flex;
+
+    > img {
+      display: block;
+      margin: auto;
+    }
+  }
+
+  .navbar {
+    flex: 1;
+    display: flex;
+    align-items: center;
+  }
+
+  .navs {
+    flex: 1;
+    padding: 0 10px;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+  }
+}
+</style>

@@ -6,8 +6,8 @@
 
 <style scoped lang="scss">
 .app-footer {
-  height: 40px;
-  line-height: 40px;
+  height: var(--footer-height);
+  line-height: var(--footer-height);
   padding: 0 20px;
   border-top: #eee solid 1px;
 }

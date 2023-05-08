@@ -1,5 +1,5 @@
 <template>
-  <div>成长画像</div>
+  <base-card>成长画像</base-card>
 </template>
 
 <script setup lang="ts"></script>

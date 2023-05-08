@@ -1,0 +1,8 @@
+:root {
+  --base-card-gauge: 16px;
+  --base-card-radius: 8px;
+  --base-card-bg: #ffffff;
+  --header-height: 64px;
+  --footer-height: 40px;
+  --side-width: 240px;
+}

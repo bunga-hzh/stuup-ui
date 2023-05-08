@@ -1,14 +1,14 @@
 <template>
   <div class="container">
-    <div class="score">{{ score }}</div>
-    <div class="blisters-generate-wrapper" />
-    <div class="xhh-seed">
-      <a href="#" @click="watering">浇水</a>
+    <div class="wrapper">
+      <div class="score">{{ score }}</div>
+      <div class="blisters-generate-wrapper" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { Button } from 'vexip-ui';
 import { ref, onMounted } from 'vue';
 
 const score = ref<number>(0);
@@ -17,16 +17,9 @@ onMounted(() => {
   generateBlisters();
 });
 
-const watering = () => {
-  const container = document.querySelector('.container') as HTMLDivElement;
-  let grassEl = document.createElement('div') as HTMLDivElement;
-  grassEl.classList.add('xhh_sprout');
-  container.append(grassEl);
-};
-
 const generateBlisters = (): void => {
   const wrapper = document.querySelector('.blisters-generate-wrapper') as HTMLDivElement;
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 1; i++) {
     let blistersEl = document.createElement('div') as HTMLDivElement;
     const score = Math.floor(Math.random() * 10) + 1;
     let textNode = document.createTextNode(`+${score}`);
@@ -62,31 +55,38 @@ const generateBlisters = (): void => {
 
 <style scoped lang="scss">
 .container {
-  width: 100vw;
-  height: 100vh;
-  background: url(src/assets/home_images/background.png) no-repeat left top;
-  background-size: cover;
-  overflow: hidden;
+  width: 100%;
+  position: relative;
 
-  .score {
-    position: absolute;
+  .wrapper {
+    width: 1920px;
+    height: 1080px;
+    background: url(src/assets/home_images/background.png) no-repeat left top;
+    background-size: cover;
+    overflow: hidden;
+    position: relative;
     top: 0;
-    left: 0;
-    width: 100px;
-    height: 100px;
-    line-height: 100px;
-    text-align: center;
-    color: blue;
-    font-size: 48px;
-    font-weight: bold;
-  }
+    margin: 0 auto;
 
-  .blisters-generate-wrapper {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 400px;
-    height: 400px;
+    .score {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100px;
+      height: 100px;
+      line-height: 100px;
+      text-align: center;
+      color: blue;
+      font-size: 48px;
+      font-weight: bold;
+    }
+    .blisters-generate-wrapper {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 400px;
+      height: 400px;
+    }
   }
 }
 </style>
@@ -141,47 +141,6 @@ const generateBlisters = (): void => {
   }
   to {
     opacity: 1;
-  }
-}
-
-.xhh-seed {
-  position: fixed;
-  bottom: 20vh;
-  left: 26vw;
-  width: 10vw;
-  height: 10vh;
-  background: url(src/assets/home_images/xhh_seed.png) no-repeat left top;
-  background-size: contain;
-
-  > a {
-    opacity: 0;
-  }
-  &:hover {
-    transform: scale(1.05);
-
-    > a {
-      opacity: 1;
-    }
-  }
-}
-.xhh_sprout {
-  position: fixed;
-  bottom: 22vh;
-  left: 35vw;
-  width: 25vw;
-  height: 15vh;
-  background: url(src/assets/home_images/xhh_sprout.png) no-repeat left top;
-  background-size: contain;
-
-  > a {
-    opacity: 0;
-  }
-  &:hover {
-    transform: scale(1.05);
-
-    > a {
-      opacity: 1;
-    }
   }
 }
 </style>
