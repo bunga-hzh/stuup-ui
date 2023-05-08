@@ -1,6 +1,7 @@
 import router from '@/router';
 import NProgress from '@/utils/progress';
 import { existToken } from '@/utils/auth';
+import pinia from '@/store';
 import { usePermissionStore } from '@/store/modules/premission';
 import { data } from '@/store/modules/RoutesData.js';
 

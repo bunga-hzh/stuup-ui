@@ -1,5 +1,5 @@
-// 引入状态管理
-import { setupStore } from '@/store';
+// pinia
+import pinia from '@/store';
 
 // VexipIcon
 import * as VexipIcon from '@vexip-ui/icons';
@@ -14,8 +14,8 @@ import './styles/index.scss';
 import './premission';
 
 const app = createApp(App);
+app.use(pinia);
 app.use(router);
-setupStore(app);
 app.component('BaseCard', BaseCard);
 
 for (const [key, component] of Object.entries(VexipIcon)) {
