@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
+import type { App } from 'vue';
 import FrontLayout from '@/layout/front-layout.vue';
 import BackLayout from '@/layout/back-layout.vue';
 
@@ -49,5 +50,9 @@ const router = createRouter({
   history: createWebHistory(),
   routes,
 });
+
+export const setupRouter = (app: App<Element>) => {
+  app.use(router);
+};
 
 export default router;

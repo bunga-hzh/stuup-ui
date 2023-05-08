@@ -1,25 +1,30 @@
 // pinia
-import pinia from '@/store';
+import { setupStore } from '@/store';
 
 // VexipIcon
-import * as VexipIcon from '@vexip-ui/icons';
+import { setupVexipIcon } from '@/plugins/VexipIcon';
 
-// Card
-import BaseCard from './components/BaseCard.vue';
+// 路由
+import { setupRouter } from '@/router';
+
+// 全局组件
+import { setupGlobalComponents } from '@/plugins/GlobalComponents';
 
 import { createApp } from 'vue';
+
 import App from './App.vue';
-import router from './router';
+
 import './styles/index.scss';
+
 import './premission';
 
-const app = createApp(App);
-app.use(pinia);
-app.use(router);
-app.component('BaseCard', BaseCard);
+const setupAll = async () => {
+  const app = createApp(App);
+  setupStore(app);
+  setupRouter(app);
+  setupVexipIcon(app);
+  setupGlobalComponents(app);
+  app.mount('#app');
+};
 
-for (const [key, component] of Object.entries(VexipIcon)) {
-  app.component(key, component);
-}
-
-app.mount('#app');
+setupAll();

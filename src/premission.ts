@@ -1,22 +1,21 @@
 import router from '@/router';
 import NProgress from '@/utils/progress';
 import { existToken } from '@/utils/auth';
-import pinia from '@/store';
-import { usePermissionStore } from '@/store/modules/premission';
-import { data } from '@/store/modules/RoutesData.js';
+import { usePermissionStoreWithOut } from '@/store/modules/premission';
+import { data } from '@/store/modules/RoutesData';
 
-const whiteList: string = ['login'];
-const premissionStore = usePermissionStore();
+const whiteList: string[] = ['login'];
 
 // ↓全局后置钩子
 router.beforeEach((to, form, next) => {
   NProgress.start();
 
-  if (existToken()) {
+  if (true) {
     if (to.path === '/login') {
       next({ path: '/' });
     } else {
-      if (premissionStore.getRoutes.length) {
+      const premissionStore = usePermissionStoreWithOut();
+      if (!premissionStore.getRoutes.length) {
         premissionStore.generateRoutes(data);
         next({ ...to, replace: true });
       } else {

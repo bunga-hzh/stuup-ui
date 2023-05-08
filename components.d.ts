@@ -10,23 +10,15 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     Avatar: typeof import('vexip-ui')['Avatar']
-    BacsCard: typeof import('./src/components/BacsCard.vue')['default']
     BaseCard: typeof import('./src/components/BaseCard.vue')['default']
-    BgCard: typeof import('./src/components/BgCard.vue')['default']
     Button: typeof import('vexip-ui')['Button']
     Dropdown: typeof import('vexip-ui')['Dropdown']
     DropdownItem: typeof import('vexip-ui')['DropdownItem']
     DropdownList: typeof import('vexip-ui')['DropdownList']
-    Icon: typeof import('vexip-ui')['Icon']
-    IUser: typeof import('@vexip-ui/icons')['User']
     Menu: typeof import('vexip-ui')['Menu']
     MenuItem: typeof import('vexip-ui')['MenuItem']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    Scrollbar: typeof import('vexip-ui')['Scrollbar']
     Space: typeof import('vexip-ui')['Space']
-  }
-  export interface ComponentCustomProperties {
-    vLoading: typeof import('vexip-ui')['vLoading']
   }
 }

@@ -3,13 +3,13 @@ export const data = [
     id: 1,
     pid: 0,
     name: '首页',
-    path: '/home',
+    path: '/',
     flag: 1,
     icon: '',
   },
   {
     id: 2,
-    pid: 0,
+    pid: 1,
     name: '水滴申请',
     path: '/apply',
     flag: 1,
@@ -17,7 +17,7 @@ export const data = [
   },
   {
     id: 3,
-    pid: 0,
+    pid: 1,
     name: '水滴明细',
     path: '/details',
     flag: 1,
@@ -25,7 +25,7 @@ export const data = [
   },
   {
     id: 4,
-    pid: 0,
+    pid: 1,
     name: '水滴明细',
     path: '/portrait',
     flag: 1,
@@ -33,7 +33,7 @@ export const data = [
   },
   {
     id: 5,
-    pid: 0,
+    pid: 1,
     name: '后台管理',
     path: '/index',
     flag: 1,

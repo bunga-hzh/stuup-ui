@@ -1,10 +1,11 @@
 import { defineStore } from 'pinia';
+import { store } from '../index';
 import { storeNames } from '../store-name';
 import router from '@/router';
 import type { RouteRecordRaw } from 'vue-router';
 import FrontLayout from '@/layout/front-layout.vue';
 import BackLayout from '@/layout/back-layout.vue';
-import _ from 'lodash';
+const modules = import.meta.glob('../../views/**/*.{vue,tsx}');
 
 export type AsideRoutes = {
   path: string;
@@ -105,10 +106,18 @@ export const usePermissionStore = defineStore(storeNames.PERMISSION, {
       const backRoutes = this.filterRoutes(routes, 2);
       const frontAsideRoute = this.routeArrayToTree(frontRoutes);
       const backAideRoute = this.routeArrayToTree(backRoutes);
-      const asyncRouter = this.convertRoutes(routes);
+      const asyncRouter = this.convertRoutes(this.routeArrayToTree(routes));
+      console.log(asyncRouter);
       const rewriteRoutes = [...asyncRouter, { path: '/:carchAll(.*)', redirect: '/404' }];
-      rewriteRoutes.forEach(route => router.addRoute(route));
-      console.log(frontAsideRoute, backAideRoute, asyncRouter);
+      this.setRoutes(rewriteRoutes);
+      rewriteRoutes.forEach(route =>
+        router.addRoute({
+          path: route.path,
+          component: route.component,
+        })
+      );
+      console.log(router.getRoutes());
+      console.log(rewriteRoutes);
     },
     /**
      * 过滤路由
@@ -121,7 +130,8 @@ export const usePermissionStore = defineStore(storeNames.PERMISSION, {
     // 转换路由为路由组件对象
     convertRoutes(routes: routes[]) {
       return routes.filter(route => {
-        if (route.children != null && route.children && route.children.length) {
+        debugger;
+        if (route.children && route.children.length) {
           if (route.flag === 1) {
             route.component = FrontLayout;
           }
@@ -162,15 +172,16 @@ export const usePermissionStore = defineStore(storeNames.PERMISSION, {
     loadComponents(path: string, type: number) {
       console.log(path);
       if (type === 1) {
-        console.log(`@/views/front-desk${path}`);
-        return () => import('@/views/front-desk' + path);
+        return () => modules['../../views/front-desk' + path + '/index.vue'];
       }
       if (type === 2) {
-        console.log(`@/views/back-desk${path}`);
-        return () => import('@/views/back-desk' + path);
+        return () => modules['../../views/back-desk' + path + '/index.vue'];
       }
-      console.log(`@/views/${path}`);
-      return () => import('@/views' + path);
+      return () => modules['../../views' + path + '/index.vue'];
     },
   },
 });
+
+export const usePermissionStoreWithOut = () => {
+  return usePermissionStore(store);
+};
