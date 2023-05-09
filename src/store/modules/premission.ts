@@ -113,7 +113,7 @@ const createRouterObj = (routes: Menu[]): RouteRecordRaw[] => {
       let childComponent = null;
       if (childRoute.flag === 1) {
         childComponent = () => import(/* @vite-ignore */ '../../views/front-desk' + childRoute.componentPath);
-      } else if (route.flag === 2) {
+      } else if (childRoute.flag === 2) {
         childComponent = () => import(/* @vite-ignore */ '../../views/back-desk' + childRoute.componentPath);
       } else {
         childComponent = () => import(/* @vite-ignore */ '../../views$' + childRoute.componentPath);
