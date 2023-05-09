@@ -3,52 +3,79 @@ import type { App } from 'vue';
 import FrontLayout from '@/layout/front-layout.vue';
 import BackLayout from '@/layout/back-layout.vue';
 
-const routes: RouteRecordRaw[] = [
+/**
+ * 前台路由
+ */
+export const frontRoutes: RouteRecordRaw[] = [
   {
     path: '/',
     component: FrontLayout,
     redirect: '/home',
+    meta: {
+      name: '首页',
+      icon: '',
+      hidden: false,
+    },
     children: [
       {
         path: 'home',
+        name: 'Home',
         component: () => import('@/views/front-desk/home/index.vue'),
+        meta: {
+          name: '白草花园',
+          icon: '',
+          hidden: false,
+        },
       },
-      // {
-      //   path: 'apply',
-      //   component: () => import('@/views/front-desk/apply/index.vue'),
-      // },
-      // {
-      //   path: 'details',
-      //   component: () => import('@/views/front-desk/details/index.vue'),
-      // },
-      // {
-      //   path: 'portrait',
-      //   component: () => import('@/views/front-desk/portrait/index.vue'),
-      // },
     ],
   },
-  // {
-  //   path: '/',
-  //   component: BackLayout,
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       component: () => import('@/views/back-desk/dashboard/index.vue'),
-  //     },
-  //   ],
-  // },
   {
     path: '/login',
+    name: 'Login',
     component: () => import('@/views/login/index.vue'),
     meta: {
-      menu: false,
+      name: '登入',
+      hidden: true,
     },
+  },
+  {
+    path: '/404',
+    name: '404',
+    component: () => import('@/views/error/404.vue'),
+    meta: {
+      name: '404',
+      hidden: true,
+    },
+  },
+];
+
+/**
+ * 后台路由
+ */
+export const backRoutes: RouteRecordRaw[] = [
+  {
+    path: '/',
+    component: BackLayout,
+    meta: {
+      hidden: false,
+    },
+    children: [
+      {
+        path: 'index',
+        name: 'Index',
+        component: () => import('@/views/back-desk/dashboard/index.vue'),
+        meta: {
+          name: '控制台',
+          icon: '',
+        },
+      },
+    ],
   },
 ];
 
 const router = createRouter({
   history: createWebHistory(),
-  routes,
+  routes: [...frontRoutes, ...backRoutes],
 });
 
 export const setupRouter = (app: App<Element>) => {

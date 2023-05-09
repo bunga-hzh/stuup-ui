@@ -10,7 +10,7 @@
     </div>
     <div class="side">
       <Menu :reduced="isCollapse" style="border-right: 0">
-        <v-menu-item :routes="[]" />
+        <v-menu-item :routes="premissionStore.getBackAsideRoutes" />
       </Menu>
     </div>
   </div>
@@ -19,10 +19,10 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import VMenuItem from '@/layout/components/VMenuItem/index.vue';
+import { usePermissionStore } from '@/store/modules/premission';
 import { AnglesLeft, AnglesRight } from '@vexip-ui/icons';
-// import { usePermissionStore } from '@/store/modules/premission';
 
-// const premissionStore = usePermissionStore();
+const premissionStore = usePermissionStore();
 const isCollapse = ref<boolean>(false);
 </script>
 
