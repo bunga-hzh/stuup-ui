@@ -12,7 +12,6 @@ declare module '@vue/runtime-core' {
     Avatar: typeof import('vexip-ui')['Avatar']
     BaseCard: typeof import('./src/components/BaseCard.vue')['default']
     Button: typeof import('vexip-ui')['Button']
-    Card: typeof import('vexip-ui')['Card']
     Drawer: typeof import('vexip-ui')['Drawer']
     Dropdown: typeof import('vexip-ui')['Dropdown']
     DropdownItem: typeof import('vexip-ui')['DropdownItem']

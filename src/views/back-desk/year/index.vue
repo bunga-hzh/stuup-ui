@@ -1,5 +1,5 @@
 <template>
-  <base-card>班级管理</base-card>
+  <base-card>年份管理</base-card>
 </template>
 
 <script setup lang="ts"></script>

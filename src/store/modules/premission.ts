@@ -19,7 +19,7 @@ export type Menu = {
   hidden?: boolean;
   components: any;
   componentPath: string;
-  children?: Menu | [];
+  children?: Array<Menu> | [];
 };
 
 export const usePermissionStore = defineStore(storeNames.PERMISSION, {
@@ -62,8 +62,7 @@ export const usePermissionStore = defineStore(storeNames.PERMISSION, {
       const backRoutes = filterRouter(routes, 2);
       const frontAsideRoute = routeArrayToTree(frontRoutes);
       const backAideRoute = routeArrayToTree(backRoutes);
-      const asyncRouteTree = routeArrayToTree(cloneRoutes);
-      const dynamicRoutes = convertRoutes(asyncRouteTree);
+      const dynamicRoutes = createRouterObj(cloneRoutes);
       const rewriteRoutes = [...dynamicRoutes, { path: '/:carchAll(.*)', redirect: '/404' }];
       rewriteRoutes.forEach(route => router.addRoute(route));
       this.setRoutes(rewriteRoutes);
@@ -81,6 +80,58 @@ export const usePermissionStoreWithOut = () => {
 const filterRouter = (routes: Menu[], type: number) => {
   // 去掉根节点
   return routes.filter(route => route.flag === type && route.pid !== 0);
+};
+
+const createRouterObj = (routes: Menu[]): RouteRecordRaw[] => {
+  // 过滤出所有末尾节点
+  const endRoutes = routes.filter(route => !route.children || route.children?.length === 0);
+  let obj: any = {};
+  routes.forEach(route => (obj[route.oid] = route));
+  // 找出所有末尾节点的父节点
+  let parentMenuIds: number[] = [];
+  let parentMenus: Menu[] = [];
+  endRoutes.forEach(route => {
+    if (!parentMenuIds.includes(route.pid)) {
+      const parentMenu = obj[route.pid];
+      if (parentMenu) {
+        parentMenuIds.push(route.pid);
+        parentMenus.push(parentMenu);
+      }
+    }
+  });
+  return parentMenus.map(route => {
+    let component = null;
+    if (route.flag === 1) {
+      component = FrontLayout;
+    }
+    if (route.flag === 2) {
+      component = BackLayout;
+    }
+
+    let chiledRoute = endRoutes.filter(childRoute => childRoute.pid === route.oid);
+    const children = chiledRoute.map(childRoute => {
+      let childComponent = null;
+      if (childRoute.flag === 1) {
+        childComponent = () => import(/* @vite-ignore */ '../../views/front-desk' + childRoute.componentPath);
+      } else if (route.flag === 2) {
+        childComponent = () => import(/* @vite-ignore */ '../../views/back-desk' + childRoute.componentPath);
+      } else {
+        childComponent = () => import(/* @vite-ignore */ '../../views$' + childRoute.componentPath);
+      }
+      return {
+        path: childRoute.path,
+        name: childRoute.code,
+        component: childComponent,
+      };
+    });
+
+    return {
+      path: route.path,
+      name: route.code,
+      component: component,
+      children: children,
+    };
+  });
 };
 
 /**
