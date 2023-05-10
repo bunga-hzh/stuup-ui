@@ -63,7 +63,7 @@ export const usePermissionStore = defineStore(storeNames.PERMISSION, {
       const frontAsideRoute = routeArrayToTree(frontRoutes);
       const backAideRoute = routeArrayToTree(backRoutes);
       const dynamicRoutes = createRouterObj(cloneRoutes);
-      const rewriteRoutes = [...dynamicRoutes, { path: '/:carchAll(.*)', redirect: '/404' }];
+      const rewriteRoutes = [...dynamicRoutes, { path: '/:path(.*)*', redirect: '/404' }];
       rewriteRoutes.forEach(route => router.addRoute(route));
       this.setRoutes(rewriteRoutes);
       this.setFrontAsideRoutes(convertRoutes(frontAsideRoute));
@@ -82,11 +82,49 @@ const filterRouter = (routes: Menu[], type: number) => {
   return routes.filter(route => route.flag === type && route.pid !== 0);
 };
 
+const findEndRoute = (routes: Menu[]) => {
+  const cloneRoute: Menu[] = cloneDeep(routes);
+  const obj: any = {};
+  cloneRoute.forEach(route => (obj[route.oid] = route));
+  const treeRoutes: Menu[] = [];
+  cloneRoute.forEach(route => {
+    const parent = obj[route.pid];
+    if (parent) {
+      parent.children = parent.children || [];
+      parent.children.push(route);
+    } else {
+      treeRoutes.push(route);
+    }
+  });
+  return convertTree(treeRoutes);
+};
+
+const convertTree = (routeTree: Menu[]): Menu[] => {
+  let leaves: Menu[] = [];
+  const traverse = (route: Menu): void => {
+    if (!route.children || route.children.length === 0) {
+      leaves.push(route);
+      return;
+    }
+    route.children.forEach(child => traverse(child));
+  };
+  routeTree.forEach(route => traverse(route));
+  return leaves;
+};
+
 const createRouterObj = (routes: Menu[]): RouteRecordRaw[] => {
   // 过滤出所有末尾节点
-  const endRoutes = routes.filter(route => !route.children || route.children?.length === 0);
+  const endRoutes = findEndRoute(routes);
   let obj: any = {};
   routes.forEach(route => (obj[route.oid] = route));
+  let hasChildRoute: any = {};
+  routes.filter(route => (hasChildRoute[route.pid] = obj[route.pid]));
+  routes.filter(route => {
+    const parentRoute = obj[route.pid];
+    if (parentRoute) {
+      routes;
+    }
+  });
   // 找出所有末尾节点的父节点
   let parentMenuIds: number[] = [];
   let parentMenus: Menu[] = [];

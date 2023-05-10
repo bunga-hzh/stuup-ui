@@ -4,7 +4,7 @@ import { Message } from 'vexip-ui';
 
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
-  timeout: 20000,
+  timeout: 5000,
   headers: { 'Content-Type': 'application/json' },
 });
 // 添加请求拦截器
@@ -17,7 +17,7 @@ axiosInstance.interceptors.request.use(
     return config;
   },
   (error: any) => {
-    // 处理请求错误
+    // 处理请求错误s
     return Promise.reject(error);
   }
 );
@@ -35,6 +35,7 @@ axiosInstance.interceptors.response.use(
   },
   (error: any) => {
     // 处理响应错误
+    Message.error(error.message);
     return Promise.reject(error);
   }
 );

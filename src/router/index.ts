@@ -12,9 +12,9 @@ export const frontRoutes: RouteRecordRaw[] = [
     component: FrontLayout,
     redirect: '/home',
     meta: {
-      name: '首页',
-      icon: '',
       hidden: false,
+      name: null,
+      icon: '',
     },
     children: [
       {
@@ -22,7 +22,7 @@ export const frontRoutes: RouteRecordRaw[] = [
         name: 'Home',
         component: () => import('@/views/front-desk/home/index.vue'),
         meta: {
-          name: '白草花园',
+          name: '首页',
           icon: '',
           hidden: false,
         },
@@ -34,7 +34,6 @@ export const frontRoutes: RouteRecordRaw[] = [
     name: 'Login',
     component: () => import('@/views/login/index.vue'),
     meta: {
-      name: '登入',
       hidden: true,
     },
   },
@@ -43,7 +42,6 @@ export const frontRoutes: RouteRecordRaw[] = [
     name: '404',
     component: () => import('@/views/error/404.vue'),
     meta: {
-      name: '404',
       hidden: true,
     },
   },
