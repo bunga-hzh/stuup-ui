@@ -1,14 +1,13 @@
 import { defineStore } from 'pinia';
 import { store } from '../index';
 import { storeNames } from '../store-name';
-import router, { frontRoutes, backRoutes } from '@/router';
+import router, { frontRouters, backRouters } from '@/router';
 import type { RouteRecordRaw } from 'vue-router';
 import FrontLayout from '@/layout/front-layout.vue';
 import BackLayout from '@/layout/back-layout.vue';
-import { setToken } from '@/utils/auth';
 import { cloneDeep } from 'lodash';
 
-export type Menu = {
+export interface Menu {
   oid: number;
   pid: number;
   name: string;
@@ -19,55 +18,64 @@ export type Menu = {
   hidden?: boolean;
   components: any;
   componentPath: string;
-  children?: Array<Menu> | [];
-};
+}
+
+export interface MenuTree extends Menu {
+  children: Array<Menu> | [];
+}
+
+export interface PermissionState {
+  routers: RouteRecordRaw[];
+  frontAsideRouters: MenuTree[];
+  backAsideRouters: MenuTree[];
+}
 
 export const usePermissionStore = defineStore(storeNames.PERMISSION, {
-  state: () => {
+  state: (): PermissionState => {
     return {
-      routes: [],
+      routers: [],
       // 前端菜单
-      frontAsideRoutes: [],
+      frontAsideRouters: [],
       // 后端菜单
-      backAsideRoutes: [],
+      backAsideRouters: [],
     };
   },
   getters: {
-    getRoutes(): RouteRecordRaw[] {
-      return this.routes;
+    getRouters(): RouteRecordRaw[] {
+      return this.routers;
     },
-    getFrontAsideRoutes(): RouteRecordRaw[] {
-      return this.frontAsideRoutes;
+    getFrontAsideRouters(): MenuTree[] {
+      return this.frontAsideRouters;
     },
-    getBackAsideRoutes(): RouteRecordRaw[] {
-      return this.backAsideRoutes;
+    getBackAsideRouters(): MenuTree[] {
+      return this.backAsideRouters;
     },
   },
   actions: {
-    setRoutes(routes: RouteRecordRaw[]): void {
-      this.routes = routes;
+    setRouters(routers: RouteRecordRaw[]): void {
+      this.routers = routers;
     },
-    setFrontAsideRoutes(routes: RouteRecordRaw[]): void {
-      this.frontAsideRoutes = frontRoutes.concat(routes);
+    setFrontAsideRouters(routers: MenuTree[]): void {
+      this.frontAsideRouters = routers;
     },
-    setBackAsideRoutes(routes: RouteRecordRaw[]): void {
-      this.backAsideRoutes = backRoutes.concat(routes);
+    setBackAsideRouters(routers: MenuTree[]): void {
+      this.backAsideRouters = routers;
     },
     /**
      * 生成路由
      */
     async generateRoutes(routes: Menu[]) {
       const cloneRoutes = cloneDeep(routes);
-      const frontRoutes = filterRouter(routes, 1);
-      const backRoutes = filterRouter(routes, 2);
-      const frontAsideRoute = routeArrayToTree(frontRoutes);
-      const backAideRoute = routeArrayToTree(backRoutes);
+      const asideRouter = routes.filter(router => router.pid !== 0 || router.hidden);
+      const frontRoutes = filterFrontRoute(asideRouter);
+      const backRoutes = filterBackRoute(asideRouter);
       const dynamicRoutes = createRouterObj(cloneRoutes);
       const rewriteRoutes = [...dynamicRoutes, { path: '/:path(.*)*', redirect: '/404' }];
       rewriteRoutes.forEach(route => router.addRoute(route));
-      this.setRoutes(rewriteRoutes);
-      this.setFrontAsideRoutes(convertRoutes(frontAsideRoute));
-      this.setBackAsideRoutes(convertRoutes(backAideRoute));
+      this.setRouters(rewriteRoutes);
+      this.setFrontAsideRouters(frontRoutes);
+      this.setBackAsideRouters(backRoutes);
+      console.log(frontRoutes, backRoutes);
       console.log(router.getRoutes());
     },
   },
@@ -77,31 +85,115 @@ export const usePermissionStoreWithOut = () => {
   return usePermissionStore(store);
 };
 
-const filterRouter = (routes: Menu[], type: number) => {
-  // 去掉根节点
-  return routes.filter(route => route.flag === type && route.pid !== 0);
-};
-
-const findEndRoute = (routes: Menu[]) => {
-  const cloneRoute: Menu[] = cloneDeep(routes);
-  const obj: any = {};
-  cloneRoute.forEach(route => (obj[route.oid] = route));
-  const treeRoutes: Menu[] = [];
-  cloneRoute.forEach(route => {
-    const parent = obj[route.pid];
-    if (parent) {
-      parent.children = parent.children || [];
-      parent.children.push(route);
+/**
+ * 转为树形
+ * @param routes
+ * @returns
+ */
+const convertTree = (routes: Menu[]): MenuTree[] => {
+  const routerObj: any = {};
+  routes.forEach(route => (routerObj[route.oid] = route));
+  const rootRouters: MenuTree[] = [];
+  routes.forEach(route => {
+    const parentRouter = routerObj[route.pid];
+    if (parentRouter) {
+      // * 当前项有父节点
+      parentRouter.children = parentRouter.children || [];
+      parentRouter.children.push(route);
     } else {
-      treeRoutes.push(route);
+      // * 当前项没有父节点 -> 顶层
+      rootRouters.push(route as MenuTree);
     }
   });
-  return convertTree(treeRoutes);
+  return rootRouters;
 };
 
-const convertTree = (routeTree: Menu[]): Menu[] => {
+const filterHidden = (routers: RouteRecordRaw[]): RouteRecordRaw[] => {
+  for (let i = routers.length - 1; i >= 0; i--) {
+    if (routers[i].meta?.hidden) {
+      routers.splice(i, 1);
+    } else if (routers[i].children && routers[i].children.length > 0) {
+      filterHidden(routers[i].children);
+    }
+  }
+  return routers;
+};
+
+/**
+ * 转换路由
+ * @param routers
+ * @returns
+ */
+const converToMenu = (routers: RouteRecordRaw[], flag: number): MenuTree[] => {
+  return routers.map(reouter => {
+    let children: MenuTree[] = [];
+    if (reouter.children) {
+      children = converToMenu(reouter.children, flag);
+    }
+    return {
+      path: reouter.path,
+      code: reouter.name,
+      name: reouter.meta?.name,
+      icon: reouter.meta?.icon,
+      hidden: reouter.meta?.hidden,
+      flag: flag,
+      children: children,
+    };
+  });
+};
+
+/**
+ * 处理菜单
+ * @param routers
+ */
+const handlerMenu = (routers: MenuTree[]): MenuTree[] => {
+  // 只处理一级路由
+  return routers.map(router => {
+    if (router.children?.length === 1) {
+      const oneChildren = router.children[0] as MenuTree;
+      if (!oneChildren.children || oneChildren.children.length === 0) {
+        return oneChildren;
+      }
+    }
+    return router;
+  });
+};
+
+/**
+ * 过滤前台路由
+ * @param routes
+ */
+const filterFrontRoute = (routes: Menu[]): MenuTree[] => {
+  const ROUTER_FLAG: number = 1;
+  const cloneRoutes: Menu[] = cloneDeep(routes);
+  const dynamicFrontRoutes: Menu[] = cloneRoutes.filter(route => route.flag === ROUTER_FLAG);
+  const routerTree: MenuTree[] = convertTree(dynamicFrontRoutes);
+  const constantRouters: MenuTree[] = converToMenu(filterHidden(frontRouters), ROUTER_FLAG);
+  let mergeRouters: MenuTree[] = constantRouters.concat(routerTree);
+  const asideRouter = handlerMenu(mergeRouters);
+  console.log(asideRouter);
+  return asideRouter;
+};
+
+/**
+ * 过滤后台路由
+ * @param routes
+ */
+const filterBackRoute = (routes: Menu[]): MenuTree[] => {
+  const ROUTER_FLAG: number = 2;
+  const cloneRoutes: Menu[] = cloneDeep(routes);
+  const dynamicBackRoutes: Menu[] = cloneRoutes.filter(route => route.flag === ROUTER_FLAG);
+  const routerTree: MenuTree[] = convertTree(dynamicBackRoutes);
+  const constantRouters: MenuTree[] = converToMenu(filterHidden(backRouters), ROUTER_FLAG);
+  const mergeRouters: MenuTree[] = constantRouters.concat(routerTree);
+  const asideRouter = handlerMenu(mergeRouters);
+  console.log(asideRouter);
+  return asideRouter;
+};
+
+const findEndRoute = (routeTree: MenuTree[]): Menu[] => {
   let leaves: Menu[] = [];
-  const traverse = (route: Menu): void => {
+  const traverse = (route: MenuTree): void => {
     if (!route.children || route.children.length === 0) {
       leaves.push(route);
       return;
@@ -113,8 +205,10 @@ const convertTree = (routeTree: Menu[]): Menu[] => {
 };
 
 const createRouterObj = (routes: Menu[]): RouteRecordRaw[] => {
+  const cloneRouter: Menu[] = cloneDeep(routes);
+  const routerTree: MenuTree[] = convertTree(cloneRouter);
   // 过滤出所有末尾节点
-  const endRoutes = findEndRoute(routes);
+  const endRoutes = findEndRoute(routerTree);
   let obj: any = {};
   routes.forEach(route => (obj[route.oid] = route));
   let hasChildRoute: any = {};
@@ -170,73 +264,4 @@ const createRouterObj = (routes: Menu[]): RouteRecordRaw[] => {
       children: children,
     };
   });
-};
-
-/**
- * 路由数组转树形
- * @param routes
- * @returns
- */
-const routeArrayToTree = (routes: Menu[]) => {
-  // * 先生成parent建立父子关系
-  const obj: any = {};
-  routes.forEach(route => (obj[route.oid] = route));
-  const parents: Menu[] = [];
-  routes.forEach(route => {
-    const parent = obj[route.pid];
-    if (parent) {
-      // * 当前项有父节点
-      parent.children = parent.children || [];
-      parent.children.push(route);
-    } else {
-      // * 当前项没有父节点 -> 顶层
-      parents.push(route);
-    }
-  });
-  return parents;
-};
-
-/**
- * 转换为路由对象
- * @param routes
- * @returns
- */
-const convertRoutes = routes => {
-  return routes.map(route => {
-    let children = [];
-    if (route.children && route.children.length) {
-      children = convertRoutes(route.children);
-    }
-    return {
-      path: route.path,
-      name: route.code,
-      component: loadRouteComponents(route),
-      children: children,
-      meta: {
-        name: route.name,
-        icon: route.icon,
-        flag: route.flag,
-        hidden: route.hidden,
-      },
-    };
-  });
-};
-
-const loadRouteComponents = route => {
-  if (route.children && route.pid === 0) {
-    if (route.flag === 1) {
-      return FrontLayout;
-    }
-    if (route.flag === 2) {
-      return BackLayout;
-    }
-  } else {
-    if (route.flag === 1) {
-      return () => import(/* @vite-ignore */ '../../views/front-desk' + route.componentPath);
-    } else if (route.flag === 2) {
-      return () => import(/* @vite-ignore */ '../../views/back-desk' + route.componentPath);
-    } else {
-      return () => import(/* @vite-ignore */ '../../views$' + route.componentPath);
-    }
-  }
 };

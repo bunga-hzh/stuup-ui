@@ -6,16 +6,11 @@ import BackLayout from '@/layout/back-layout.vue';
 /**
  * 前台路由
  */
-export const frontRoutes: RouteRecordRaw[] = [
+export const frontRouters: RouteRecordRaw[] = [
   {
     path: '/',
     component: FrontLayout,
     redirect: '/home',
-    meta: {
-      hidden: false,
-      name: null,
-      icon: '',
-    },
     children: [
       {
         path: 'home',
@@ -50,7 +45,7 @@ export const frontRoutes: RouteRecordRaw[] = [
 /**
  * 后台路由
  */
-export const backRoutes: RouteRecordRaw[] = [
+export const backRouters: RouteRecordRaw[] = [
   {
     path: '/',
     component: BackLayout,
@@ -73,7 +68,7 @@ export const backRoutes: RouteRecordRaw[] = [
 
 const router = createRouter({
   history: createWebHistory(),
-  routes: [...frontRoutes, ...backRoutes],
+  routes: [...frontRouters, ...backRouters],
 });
 
 export const setupRouter = (app: App<Element>) => {

@@ -10,7 +10,7 @@
     </div>
     <div class="side">
       <Menu :reduced="isCollapse" style="border-right: 0">
-        <v-menu-item :routes="premissionStore.getBackAsideRoutes" />
+        <v-menu-item :routes="premissionStore.getBackAsideRouters" />
       </Menu>
     </div>
   </div>

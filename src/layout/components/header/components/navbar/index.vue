@@ -1,6 +1,6 @@
 <template>
   <Menu horizontal>
-    <v-menu-item :routes="premissionStore.getFrontAsideRoutes" />
+    <v-menu-item :routes="premissionStore.getFrontAsideRouters" />
   </Menu>
 </template>
 

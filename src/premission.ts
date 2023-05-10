@@ -14,7 +14,7 @@ router.beforeEach(async (to, form, next) => {
       next({ path: '/' });
     } else {
       const premissionStore = usePermissionStoreWithOut();
-      if (!premissionStore.getRoutes.length) {
+      if (!premissionStore.getRouters.length) {
         const res = await queryUserAuthority();
         premissionStore.generateRoutes(res.data);
         next({ ...to, replace: true });
