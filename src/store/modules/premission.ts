@@ -75,8 +75,6 @@ export const usePermissionStore = defineStore(storeNames.PERMISSION, {
       this.setRouters(rewriteRoutes);
       this.setFrontAsideRouters(frontRoutes);
       this.setBackAsideRouters(backRoutes);
-      console.log(frontRoutes, backRoutes);
-      console.log(router.getRoutes());
     },
   },
 });
@@ -171,7 +169,6 @@ const filterFrontRoute = (routes: Menu[]): MenuTree[] => {
   const constantRouters: MenuTree[] = converToMenu(filterHidden(frontRouters), ROUTER_FLAG);
   let mergeRouters: MenuTree[] = constantRouters.concat(routerTree);
   const asideRouter = handlerMenu(mergeRouters);
-  console.log(asideRouter);
   return asideRouter;
 };
 
@@ -187,7 +184,6 @@ const filterBackRoute = (routes: Menu[]): MenuTree[] => {
   const constantRouters: MenuTree[] = converToMenu(filterHidden(backRouters), ROUTER_FLAG);
   const mergeRouters: MenuTree[] = constantRouters.concat(routerTree);
   const asideRouter = handlerMenu(mergeRouters);
-  console.log(asideRouter);
   return asideRouter;
 };
 

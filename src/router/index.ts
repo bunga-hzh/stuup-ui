@@ -13,7 +13,7 @@ export const frontRouters: RouteRecordRaw[] = [
     redirect: '/home',
     children: [
       {
-        path: 'home',
+        path: '/home',
         name: 'Home',
         component: () => import('@/views/front-desk/home/index.vue'),
         meta: {
@@ -54,7 +54,7 @@ export const backRouters: RouteRecordRaw[] = [
     },
     children: [
       {
-        path: 'index',
+        path: '/index',
         name: 'Index',
         component: () => import('@/views/back-desk/dashboard/index.vue'),
         meta: {
