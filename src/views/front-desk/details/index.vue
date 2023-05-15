@@ -1,130 +1,34 @@
 <template>
   <base-card>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
-    <div>测试</div>
+    <Table :columns="columns" :data="data" :width="200"></Table>
   </base-card>
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue';
+import { ref } from 'vue';
+import { defineColumns } from 'vexip-ui';
 
-const columns = [
-  {
-    title: '得分标准',
-    dataIndex: 'standard',
-  },
-  {
-    title: '得分项目',
-    dataIndex: 'project',
-  },
-  {
-    title: '得分',
-    dataIndex: 'score',
-  },
-  {
-    title: '获取时间',
-    dataIndex: 'createTime',
-  },
-];
-const data = reactive([
+const columns = ref(
+  defineColumns([
+    {
+      name: '得分标准',
+      key: 'standard',
+    },
+    {
+      name: '得分项目',
+      key: 'project',
+    },
+    {
+      name: '得分',
+      key: 'score',
+    },
+    {
+      name: '获取时间',
+      key: 'createTime',
+    },
+  ])
+);
+const data = ref([
   {
     key: 1,
     standard: 'Test',
