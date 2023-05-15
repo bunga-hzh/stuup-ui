@@ -26,7 +26,7 @@ let leaderboard_container: HTMLDivElement;
 
 onMounted(() => {
   btn = document.querySelector('.btn') as HTMLDivElement;
-  leaderboard_container = document.querySelector('.leaderboard_container') as HTMLDivElement;
+  leaderboard_container = document.querySelector('.leaderboard-container') as HTMLDivElement;
   // 排行榜按钮移入事件
   btn.addEventListener('mouseenter', () => (show_leaderboard.value = true));
   // 排行榜按钮移入事件
