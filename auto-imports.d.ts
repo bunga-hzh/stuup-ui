@@ -2024,7 +2024,6 @@ declare global {
   const IYoutubeB: typeof import('@vexip-ui/icons')['YoutubeB']
   const IZ: typeof import('@vexip-ui/icons')['Z']
   const IZhihuB: typeof import('@vexip-ui/icons')['ZhihuB']
-  const Message: typeof import('vexip-ui')['Message']
 }
 // for vue template auto import
 import { UnwrapRef } from 'vue'
@@ -4050,6 +4049,5 @@ declare module 'vue' {
     readonly IYoutubeB: UnwrapRef<typeof import('@vexip-ui/icons')['YoutubeB']>
     readonly IZ: UnwrapRef<typeof import('@vexip-ui/icons')['Z']>
     readonly IZhihuB: UnwrapRef<typeof import('@vexip-ui/icons')['ZhihuB']>
-    readonly Message: UnwrapRef<typeof import('vexip-ui')['Message']>
   }
 }

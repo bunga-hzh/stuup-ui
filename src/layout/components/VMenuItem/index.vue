@@ -1,7 +1,7 @@
 <template>
   <RouterLink v-for="(route, index) in routes" :key="route.path + index" :to="route.children?.length ? '' : route.path">
     <MenuItem :label="route.path">
-      {{ route.name }}
+      <span class="menu-name">{{ route.name }}</span>
       <template #icon v-if="route.icon">
         <component v-if="route.icon" :is="route.icon" />
       </template>
@@ -30,4 +30,8 @@ a {
   outline: none;
   color: #000;
 }
+
+// .menu-name {
+//   font-size: 14px;
+// }
 </style>

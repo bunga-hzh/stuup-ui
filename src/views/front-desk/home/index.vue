@@ -1,146 +1,69 @@
 <template>
-  <div class="container">
-    <div class="wrapper">
-      <div class="score">{{ score }}</div>
-      <div class="blisters-generate-wrapper" />
+  <div class="home-contaienr">
+    <div class="operation-layer">
+      <div class="hint">
+        测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试
+      </div>
+      <Leaderboard class="leaderboard" />
     </div>
+    <video class="background-layer" src="src/assets/video/backgroud-vodeo.mp4" autoplay muted loop />
   </div>
 </template>
 
 <script setup lang="ts">
-import { Button } from 'vexip-ui';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
+import Leaderboard from '@/components/Leaderboard/index.vue';
 
-const score = ref<number>(0);
+let footer: HTMLDivElement;
+let hint: HTMLDivElement;
 
 onMounted(() => {
-  generateBlisters();
+  footer = document.getElementById('app-footer') as HTMLDivElement;
+  hint = document.querySelector('.hint') as HTMLDivElement;
+  // 隐藏底部
+  footer.style.display = 'none';
 });
-
-const generateBlisters = (): void => {
-  const wrapper = document.querySelector('.blisters-generate-wrapper') as HTMLDivElement;
-  for (let i = 0; i < 1; i++) {
-    let blistersEl = document.createElement('div') as HTMLDivElement;
-    const score = Math.floor(Math.random() * 10) + 1;
-    let textNode = document.createTextNode(`+${score}`);
-    blistersEl.setAttribute('score', score);
-    blistersEl.append(textNode);
-    blistersEl.classList.add('blisters');
-    const blistersDiameter: number = 50;
-    blistersEl.style.top = `${
-      Math.floor(Math.random() * (wrapper.clientWidth - blistersDiameter)) + blistersDiameter
-    }px`;
-    blistersEl.style.left = `${
-      Math.floor(Math.random() * (wrapper.clientWidth - blistersDiameter)) + blistersDiameter
-    }px`;
-    const delayTime = Math.floor(Math.random() * 2000);
-    blistersEl.style.animationDelay = `${delayTime}ms`;
-
-    wrapper.appendChild(blistersEl);
-  }
-
-  wrapper.addEventListener('click', e => {
-    if (e.target.classList.contains('blisters')) {
-      e.target.style.animationPlayState = 'running';
-      e.target.style.animationDuration = '2s';
-      e.target.style.animationDirection = 'reverse';
-      console.log(e.target.getAttribute('score'));
-      setTimeout(() => {
-        e.target.remove();
-      }, 3000);
-    }
-  });
-};
+onUnmounted(() => {
+  footer.style.display = 'block';
+});
 </script>
 
 <style scoped lang="scss">
-.container {
+.home-contaienr {
   width: 100%;
+  height: 100%;
   position: relative;
+  background-color: #d5d1c2;
+  overflow-x: hidden;
 
-  .wrapper {
-    width: 1920px;
-    height: 1080px;
-    background: url(src/assets/home_images/background.png) no-repeat left top;
-    background-size: cover;
-    overflow: hidden;
-    position: relative;
-    top: 0;
-    margin: 0 auto;
+  .background-layer {
+    width: 100%;
+    aspect-ratio: 16/9;
+    z-index: -1;
+  }
 
-    .score {
+  .operation-layer {
+    position: absolute;
+    width: 100%;
+    aspect-ratio: 16/9;
+    z-index: 1;
+
+    .hint {
       position: absolute;
       top: 0;
       left: 0;
-      width: 100px;
-      height: 100px;
-      line-height: 100px;
-      text-align: center;
-      color: blue;
-      font-size: 48px;
-      font-weight: bold;
+      display: none;
+      background-color: rgba(136, 134, 127, 0.3);
+      padding: 20px;
+      border-radius: 16px;
+      color: #fff;
     }
-    .blisters-generate-wrapper {
+
+    .leaderboard {
       position: absolute;
+      right: 0;
       top: 0;
-      left: 0;
-      width: 400px;
-      height: 400px;
     }
-  }
-}
-</style>
-
-<style lang="scss">
-.blisters {
-  position: absolute;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  text-align: center;
-  line-height: 50px;
-  font-size: 1.15rem;
-  font-weight: bold;
-  color: red;
-  box-shadow: inset 10px 10px 10px rgba(0, 0, 0, 0.5), 15px 25px 10px rgba(255, 255, 255, 0.05),
-    15px 20px 20px rgba(255, 255, 255, 0.05), inset -10px -10px 15px rgba(255, 255, 255, 0.9);
-  animation: blisters-show 2s ease forwards;
-  opacity: 0;
-  cursor: pointer;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: #fff;
-  }
-
-  &::after {
-    content: '';
-    position: absolute;
-    top: 6px;
-    left: 20px;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #fff;
-  }
-
-  &:hover {
-    transform: scale(1.25);
-  }
-}
-
-@keyframes blisters-show {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
   }
 }
 </style>

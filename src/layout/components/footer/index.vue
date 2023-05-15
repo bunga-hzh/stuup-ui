@@ -1,14 +1,15 @@
 <template>
-  <div class="app-footer">尾部</div>
+  <div id="app-footer">尾部</div>
 </template>
 
 <script setup lang="ts"></script>
 
 <style scoped lang="scss">
-.app-footer {
+#app-footer {
   height: var(--footer-height);
   line-height: var(--footer-height);
-  padding: 0 20px;
+  font-size: var(--footer-font-size);
+  text-align: center;
   border-top: #eee solid 1px;
 }
 </style>

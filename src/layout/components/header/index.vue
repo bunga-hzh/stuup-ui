@@ -1,7 +1,7 @@
 <template>
-  <div class="app-header">
+  <div id="app-header">
     <div class="logo">
-      <img :src="logo" alt="Logo" width="194" height="38" />
+      <img :src="logo" alt="Logo" />
     </div>
     <div class="navbar">
       <Navbar />
@@ -30,7 +30,7 @@ import Navbar from './components/navbar/index.vue';
 </script>
 
 <style scoped lang="scss">
-.app-header {
+#app-header {
   height: var(--header-height);
   border: 1px solid #eee;
   display: flex;
@@ -41,6 +41,8 @@ import Navbar from './components/navbar/index.vue';
     display: flex;
 
     > img {
+      width: 194px;
+      height: 38px;
       display: block;
       margin: auto;
     }
