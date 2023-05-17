@@ -27,6 +27,9 @@ export const frontRouters: RouteRecordRaw[] = [
   {
     path: '/test',
     component: () => import('@/views/front-desk/home/test_index.vue'),
+    meta: {
+      hidden: true,
+    },
   },
   {
     path: '/login',

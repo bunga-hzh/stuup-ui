@@ -69,10 +69,7 @@ type FlowersType = {
 
 const mockFlowers = reactive<FlowerLevelType>({
   bm_cg: 2,
-  hh_fy: 3,
-  bm_zz: 2,
-  hh_zz: 0,
-  hh_kh: 0,
+  hh_cg: 3,
 });
 
 const show_hint = ref<boolean>(false);
@@ -219,11 +216,11 @@ const generateBlisters = (): void => {
   height: 100%;
   position: relative;
   background-color: #d5d1c2;
-  overflow-x: hidden;
+  overflow: hidden;
 
   .background-layer {
     width: 100%;
-    aspect-ratio: 16/9;
+    object-fit: cover;
     z-index: -1;
   }
 
@@ -247,35 +244,42 @@ const generateBlisters = (): void => {
 
     .blisters-generate-wrapper {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 400px;
-      height: 400px;
+      top: 600px;
+      left: 600px;
+      width: 200px;
+      height: 200px;
+      border: 1px solid #eee;
     }
 
     .class-name {
       position: absolute;
       left: 50%;
       transform: translate(-50%, 50px);
-      font-size: 24px;
+      font-size: 32px;
+      font-family: FZShuTi;
     }
 
     .flower_level {
-      width: 260px;
+      width: 250px;
       height: 150px;
       position: absolute;
       left: 50px;
       top: 880px;
       display: flex;
+      justify-content: center;
+      align-items: center;
       flex-wrap: wrap;
 
       .flower-badge {
         margin-left: 8px;
         > img {
-          width: 50px;
-          height: 50px;
-          border-radius: 50%;
+          width: 100px;
+          height: 100px;
+          border-radius: 25%;
+          border: 2px solid #336f3f;
           -webkit-user-drag: none;
+          box-shadow: inset 10px 10px 10px rgba(0, 0, 0, 0.5), 15px 25px 10px rgba(255, 255, 255, 0.05),
+            15px 20px 20px rgba(255, 255, 255, 0.05);
         }
       }
     }
@@ -335,16 +339,17 @@ const generateBlisters = (): void => {
 <style lang="scss">
 .blisters {
   position: absolute;
+  background-color: #d4ff02;
+  border-radius: 50%;
   width: 50px;
   height: 50px;
-  border-radius: 50%;
   text-align: center;
   line-height: 50px;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: bold;
-  color: red;
+  color: #1a8e00;
   box-shadow: inset 10px 10px 10px rgba(0, 0, 0, 0.5), 15px 25px 10px rgba(255, 255, 255, 0.05),
-    15px 20px 20px rgba(255, 255, 255, 0.05), inset -10px -10px 15px rgba(255, 255, 255, 0.9);
+    15px 20px 20px rgba(255, 255, 255, 0.05);
   animation: blisters-show 2s ease forwards;
   opacity: 0;
   cursor: pointer;
@@ -352,7 +357,7 @@ const generateBlisters = (): void => {
   &::before {
     content: '';
     position: absolute;
-    top: 10px;
+    top: 5px;
     left: 10px;
     width: 10px;
     height: 10px;

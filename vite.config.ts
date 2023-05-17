@@ -4,7 +4,7 @@ import path from 'path';
 import Components from 'unplugin-vue-components/vite';
 import AutoImport from 'unplugin-auto-import/vite';
 import { VexipUIResolver } from '@vexip-ui/plugins';
-import postcsspxtoviewport from 'postcss-px-to-viewport';
+import postcsspxtoviewport from 'postcss-px-to-viewport-update';
 
 // https://vitejs.dev/config/
 const viteConfig = defineConfig(async (mode: ConfigEnv) => {
@@ -42,6 +42,7 @@ const viteConfig = defineConfig(async (mode: ConfigEnv) => {
             mediaQuery: true, // 是否在媒体查询的css代码中也进行转换，默认false
             replace: true, // 是否转换后直接更换属性值
             landscape: false, // 是否处理横屏情况
+            include: [/src\/views\/front-desk\/home\/index/],
           }),
         ],
       },
