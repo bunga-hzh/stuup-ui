@@ -54,11 +54,17 @@
       @close="handleModelColse">
       <ConfigProvider :props="providedProps">
         <Form ref="formRef" :model="form" label-align="top">
-          <FormItem label="年级名称" prop="name">
+          <FormItem label="专业编号" prop="majorCode">
             <Input />
           </FormItem>
-          <FormItem label="年份" prop="year">
-            <DatePicker type="year" />
+          <FormItem label="专业名称" prop="majorName">
+            <Input />
+          </FormItem>
+          <FormItem label="所属部门" prop="facultyId">
+            <Select :options="dept" clearable />
+          </FormItem>
+          <FormItem label="学制" prop="system">
+            <NumberInput :min="0" :max="10" />
           </FormItem>
         </Form>
       </ConfigProvider>
@@ -70,24 +76,27 @@
 import { ref, onMounted, reactive } from 'vue';
 import { defineColumns } from 'vexip-ui';
 import { PaginationResult } from '@/types/global';
-import { queryDept, DeptQueryType } from '@/api/dept/index';
+import { queryMajor, MajorQueryType } from '@/api/major/index';
 
-interface GradeSearchType {
+interface MajorSearchType {
   majorName: string;
 }
 
-interface GradeTableType {
-  oid: number;
+interface MajorTableType {
+  oid: number | null;
   majorCode: string;
   majorName: string;
-  system: string;
+  facultyId?: number | null;
+  facultyName?: string;
+  system?: string;
 }
 
-interface GradeFormType {
-  oid: number;
+interface MajorFormType {
+  oid: number | null;
   majorCode: string;
   majorName: string;
-  system: string;
+  facultyId?: number | null;
+  system?: string;
 }
 
 const searchProvidedProps = {
@@ -104,14 +113,17 @@ const modelTitle = ref<string>('');
 const modelLoading = ref<boolean>(false);
 const currentPage = ref<number>(1);
 const pageSize = ref<number>(10);
-const data = ref<GradeTableType[]>([]);
-const search = reactive<GradeSearchType>({
+const dept = ref([]);
+const data = ref<MajorTableType[]>([]);
+const search = reactive<MajorSearchType>({
   majorName: '',
 });
-const form = reactive<GradeFormType>({
+const form = reactive<MajorFormType>({
   oid: null,
-  deptName: '',
-  adminName: null,
+  majorCode: '',
+  majorName: '',
+  facultyId: null,
+  system: '',
 });
 
 const formRef = ref();
@@ -145,8 +157,8 @@ onMounted(() => {
   fetchList();
 });
 
-const fetchList = async (query?: DeptQueryType) => {
-  const res = await queryDept(
+const fetchList = async (query?: MajorQueryType) => {
+  const res = await queryMajor(
     Object.assign({ currentPage: currentPage.value, pageSize: pageSize.value }, search, query)
   );
   const result = res.data as PaginationResult;
@@ -181,12 +193,14 @@ const addRow = () => {
   modelTitle.value = '添加';
   active.value = true;
 };
-const updateRow = (row: GradeTableType) => {
+const updateRow = (row: MajorTableType) => {
   modelTitle.value = '修改';
   active.value = true;
   form.oid = row.oid;
-  form.deptName = row.facultyName;
-  form.adminName = row.adminName;
+  form.majorCode = row.majorCode;
+  form.majorName = row.majorName;
+  form.facultyId = row.facultyId;
+  form.system = row.system;
 };
 const delRow = (oid: number) => {
   console.log(oid);

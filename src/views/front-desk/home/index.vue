@@ -23,7 +23,7 @@
       <div class="cj-btn" />
       <div class="xh-btn" />
     </div>
-    <video class="background-layer" src="src/assets/video/video-background.mp4" autoplay muted loop />
+    <video src="src/assets/video/video-background.mp4" autoplay muted loop />
   </div>
 </template>
 
@@ -216,18 +216,23 @@ const generateBlisters = (): void => {
   height: 100%;
   position: relative;
   background-color: #d5d1c2;
-  overflow: hidden;
+  overflow-x: hidden;
 
-  .background-layer {
-    width: 100%;
-    object-fit: cover;
+  > video {
+    width: 1920px;
+    height: 1080px;
+    object-fit: fill;
     z-index: -1;
   }
 
   .operation-layer {
     position: absolute;
-    width: 100%;
+    top: 0;
+    left: 50%;
+    transform: translateX();
+    height: 100%;
     aspect-ratio: 16/9;
+    border: 1px solid red;
     z-index: 1;
 
     .hint {
