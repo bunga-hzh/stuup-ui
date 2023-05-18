@@ -15,12 +15,6 @@
           <FormItem label="学号" prop="studentNo">
             <Input />
           </FormItem>
-          <FormItem label="荣誉称号" prop="honor">
-            <Input />
-          </FormItem>
-          <FormItem label="等级" prop="level">
-            <Select />
-          </FormItem>
         </Form>
       </template>
       <template #searchBtn>
@@ -95,24 +89,9 @@ const columns = ref(
       order: 5,
     },
     {
-      name: '荣誉称号',
-      key: 'honor',
+      name: '累计课时',
+      key: 'hours',
       order: 6,
-    },
-    {
-      name: '级别',
-      key: 'level',
-      order: 7,
-    },
-    {
-      name: '评选单位',
-      key: 'unit',
-      order: 8,
-    },
-    {
-      name: '评选时间',
-      key: 'time',
-      order: 9,
     },
   ])
 );
