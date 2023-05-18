@@ -4,23 +4,14 @@
       <div style="width: 100%">
         <ConfigProvider :props="searchProvidedProps">
           <Form :model="search">
-            <FormItem label="班级编号" prop="code">
+            <FormItem label="菜单名称" prop="name">
               <Input />
             </FormItem>
-            <FormItem label="班级名称" prop="name">
+            <FormItem label="菜单编号" prop="code">
+              <Input />
+            </FormItem>
+            <FormItem label="菜单类型" prop="flag">
               <Select :options="sexDict" clearable />
-            </FormItem>
-            <FormItem label="所属年级" prop="gradeId">
-              <Select :options="deptDict" clearable />
-            </FormItem>
-            <FormItem label="所属部门" prop="facultyId">
-              <Select :options="deptDict" clearable />
-            </FormItem>
-            <FormItem label="所属专业" prop="majorId">
-              <Select :options="deptDict" clearable />
-            </FormItem>
-            <FormItem label="班主任" prop="teacherId">
-              <Select :options="stateDict" clearable />
             </FormItem>
             <FormItem action>
               <Button type="primary" @click="handlerSearch">查询</Button>
@@ -41,10 +32,11 @@
         :key-config="{ id: 'oid' }"
         :current-page="currentPage"
         :page-size="pageSize">
-        <TableColumn name="操作" id-key="menu" :order="11" text-align="center" :width="200">
+        <TableColumn name="操作" id-key="menu" :order="6" text-align="center" :width="300">
           <template #default="{ row }">
             <Button @click="updateRow(row)">修改</Button>
             <Button @click="delRow(row.oid)">删除</Button>
+            <Button @click="rolePermission(row.oid)">权限分配</Button>
           </template>
         </TableColumn>
       </Table>
@@ -69,29 +61,26 @@
       @close="handleModelColse">
       <ConfigProvider :props="providedProps">
         <Form ref="formRef" :model="form" label-align="top">
-          <FormItem label="班级编号" prop="code">
+          <FormItem label="父节点" prop="pid">
+            <Select />
+          </FormItem>
+          <FormItem label="菜单名称" prop="name">
             <Input />
           </FormItem>
-          <FormItem label="班级名称" prop="name">
+          <FormItem label="菜单编号" prop="code">
+            <Input />
+          </FormItem>
+          <FormItem label="菜单路径" prop="path">
+            <Input />
+          </FormItem>
+          <FormItem label="菜单图标" prop="icon">
             <Select :options="sexDict" clearable />
           </FormItem>
-          <FormItem label="所属年级" prop="gradeId">
-            <Select :options="deptDict" clearable />
+          <FormItem label="菜单组件路径" prop="componentsPath">
+            <Input />
           </FormItem>
-          <FormItem label="所属部门" prop="facultyId">
-            <Select :options="deptDict" clearable />
-          </FormItem>
-          <FormItem label="所属专业" prop="majorId">
-            <Select :options="deptDict" clearable />
-          </FormItem>
-          <FormItem label="班主任" prop="teacherId">
-            <Select :options="stateDict" clearable />
-          </FormItem>
-          <FormItem label="管理员" prop="adminId">
-            <Select :options="stateDict" clearable />
-          </FormItem>
-          <FormItem label="是否有效" prop="isValid">
-            <Select :options="stateDict" clearable />
+          <FormItem label="菜单类型" prop="flag">
+            <Select />
           </FormItem>
         </Form>
       </ConfigProvider>
@@ -163,49 +152,34 @@ const formRef = ref();
 const columns = ref(
   defineColumns([
     {
-      name: '班号',
-      key: 'code',
+      name: '菜单名称',
+      key: 'name',
       order: 1,
     },
     {
-      name: '班级名称',
-      key: 'name',
+      name: '菜单编号',
+      key: 'code',
       order: 2,
     },
     {
-      name: '所属专业',
-      key: 'facultyId',
+      name: '菜单路径',
+      key: 'path',
       order: 3,
     },
     {
-      name: '所属年级',
-      key: 'gradeId',
+      name: '菜单图标',
+      key: 'icon',
       order: 4,
     },
     {
-      name: '所属专业',
-      key: 'majorId',
+      name: '菜单组件路径',
+      key: 'componentsPath',
       order: 5,
     },
     {
-      name: '所属年级',
-      key: 'gradeId',
-      order: 6,
-    },
-    {
-      name: '班主任',
-      key: 'teacherId',
-      order: 7,
-    },
-    {
-      name: '管理员',
-      key: 'adminId',
-      order: 8,
-    },
-    {
-      name: '是否有效',
-      key: 'isValid',
-      order: 11,
+      name: '菜单类型',
+      key: 'flag',
+      order: 5,
     },
   ])
 );
@@ -251,6 +225,9 @@ const addRow = () => {
   modelTitle.value = '添加';
   active.value = true;
 };
+
+const rolePermission = (roleIId: number) => {};
+
 const updateRow = (row: TeacherTableType) => {
   modelTitle.value = '修改';
   active.value = true;

@@ -7,8 +7,17 @@
             <FormItem label="教师姓名" prop="name">
               <Input />
             </FormItem>
+            <FormItem label="性别" prop="sex">
+              <Select :options="sexDict" clearable />
+            </FormItem>
             <FormItem label="所属部门" prop="facultyId">
-              <Select :options="dept" clearable />
+              <Select :options="deptDict" clearable />
+            </FormItem>
+            <FormItem label="状态" prop="state">
+              <Select :options="stateDict" clearable />
+            </FormItem>
+            <FormItem label="教师类型" prop="type">
+              <Select :options="typeDict" clearable />
             </FormItem>
             <FormItem action>
               <Button type="primary" @click="handlerSearch">查询</Button>
@@ -29,7 +38,7 @@
         :key-config="{ id: 'oid' }"
         :current-page="currentPage"
         :page-size="pageSize">
-        <TableColumn name="操作" id-key="menu" :order="7" text-align="center" :width="200">
+        <TableColumn name="操作" id-key="menu" :order="11" text-align="center" :width="200">
           <template #default="{ row }">
             <Button @click="updateRow(row)">修改</Button>
             <Button @click="delRow(row.oid)">删除</Button>
@@ -63,11 +72,29 @@
           <FormItem label="教师工号" prop="jobNo">
             <Input />
           </FormItem>
+          <FormItem label="性别" prop="sex">
+            <Select :options="sexDict" clearable />
+          </FormItem>
           <FormItem label="所属部门" prop="facultyId">
-            <Select :options="dept" clearable />
+            <Select :options="deptDict" clearable />
+          </FormItem>
+          <FormItem label="教研组" prop="teachGroup">
+            <Input />
+          </FormItem>
+          <FormItem label="手机号" prop="phone">
+            <Input />
+          </FormItem>
+          <FormItem label="身份证号" prop="idCard">
+            <Input />
+          </FormItem>
+          <FormItem label="地址" prop="address">
+            <Input />
+          </FormItem>
+          <FormItem label="状态" prop="state">
+            <Select :options="stateDict" clearable />
           </FormItem>
           <FormItem label="教师类型" prop="type">
-            <Cascader :options="teacherTpe" clearable />
+            <Select :options="typeDict" clearable />
           </FormItem>
         </Form>
       </ConfigProvider>
@@ -117,8 +144,10 @@ const modelLoading = ref<boolean>(false);
 const currentPage = ref<number>(1);
 const pageSize = ref<number>(10);
 const total = ref<number>(10);
-const dept = ref([]);
-const teacherTpe = ref([]);
+const deptDict = ref([]);
+const sexDict = ref([]);
+const stateDict = ref([]);
+const typeDict = ref([]);
 const data = ref<TeacherTableType[]>([]);
 const search = reactive<TeacherSearchType>({
   naem: '',
@@ -147,14 +176,44 @@ const columns = ref(
       order: 2,
     },
     {
+      name: '性别',
+      key: 'sex',
+      order: 3,
+    },
+    {
       name: '所属系部',
       key: 'facultyId',
-      order: 3,
+      order: 4,
+    },
+    {
+      name: '教研组',
+      key: 'teachGroup',
+      order: 5,
+    },
+    {
+      name: '手机号',
+      key: 'phone',
+      order: 6,
+    },
+    {
+      name: '身份证号',
+      key: 'idCard',
+      order: 7,
+    },
+    {
+      name: '地址',
+      key: 'address',
+      order: 8,
+    },
+    {
+      name: '状态',
+      key: 'state',
+      order: 9,
     },
     {
       name: '教师类型',
       key: 'type',
-      order: 4,
+      order: 10,
     },
   ])
 );

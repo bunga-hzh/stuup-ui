@@ -4,22 +4,22 @@
       <div style="width: 100%">
         <ConfigProvider :props="searchProvidedProps">
           <Form :model="search">
-            <FormItem label="班级编号" prop="code">
+            <FormItem label="用户账号" prop="loginName">
               <Input />
             </FormItem>
-            <FormItem label="班级名称" prop="name">
+            <FormItem label="用户姓名" prop="userName">
+              <Input />
+            </FormItem>
+            <FormItem label="性别" prop="name">
               <Select :options="sexDict" clearable />
             </FormItem>
-            <FormItem label="所属年级" prop="gradeId">
+            <FormItem label="用户类型" prop="userType">
+              <Select :options="sexDict" clearable />
+            </FormItem>
+            <FormItem label="所属部门" prop="deptId">
               <Select :options="deptDict" clearable />
             </FormItem>
-            <FormItem label="所属部门" prop="facultyId">
-              <Select :options="deptDict" clearable />
-            </FormItem>
-            <FormItem label="所属专业" prop="majorId">
-              <Select :options="deptDict" clearable />
-            </FormItem>
-            <FormItem label="班主任" prop="teacherId">
+            <FormItem label="状态" prop="state">
               <Select :options="stateDict" clearable />
             </FormItem>
             <FormItem action>
@@ -41,7 +41,7 @@
         :key-config="{ id: 'oid' }"
         :current-page="currentPage"
         :page-size="pageSize">
-        <TableColumn name="操作" id-key="menu" :order="11" text-align="center" :width="200">
+        <TableColumn name="操作" id-key="menu" :order="10" text-align="center" :width="200">
           <template #default="{ row }">
             <Button @click="updateRow(row)">修改</Button>
             <Button @click="delRow(row.oid)">删除</Button>
@@ -69,29 +69,32 @@
       @close="handleModelColse">
       <ConfigProvider :props="providedProps">
         <Form ref="formRef" :model="form" label-align="top">
-          <FormItem label="班级编号" prop="code">
+          <FormItem label="用户账号" prop="loginName">
             <Input />
           </FormItem>
-          <FormItem label="班级名称" prop="name">
-            <Select :options="sexDict" clearable />
+          <FormItem label="用户密码" prop="password">
+            <Input />
           </FormItem>
-          <FormItem label="所属年级" prop="gradeId">
-            <Select :options="deptDict" clearable />
+          <FormItem label="用户姓名" prop="userName">
+            <Input />
           </FormItem>
-          <FormItem label="所属部门" prop="facultyId">
-            <Select :options="deptDict" clearable />
+          <FormItem label="性别" prop="name">
+            <Select :options="sexDict" />
           </FormItem>
-          <FormItem label="所属专业" prop="majorId">
-            <Select :options="deptDict" clearable />
+          <FormItem label="用户类型" prop="userType">
+            <Select :options="sexDict" />
           </FormItem>
-          <FormItem label="班主任" prop="teacherId">
-            <Select :options="stateDict" clearable />
+          <FormItem label="所属部门" prop="deptId">
+            <Select :options="deptDict" />
           </FormItem>
-          <FormItem label="管理员" prop="adminId">
-            <Select :options="stateDict" clearable />
+          <FormItem label="身份证号" prop="idCard">
+            <Input />
           </FormItem>
-          <FormItem label="是否有效" prop="isValid">
-            <Select :options="stateDict" clearable />
+          <FormItem label="出生年月" prop="birthday">
+            <DatePicker />
+          </FormItem>
+          <FormItem label="状态" prop="state">
+            <Select :options="stateDict" />
           </FormItem>
         </Form>
       </ConfigProvider>
@@ -163,49 +166,49 @@ const formRef = ref();
 const columns = ref(
   defineColumns([
     {
-      name: '班号',
-      key: 'code',
+      name: '用户姓名',
+      key: 'userName',
       order: 1,
     },
     {
-      name: '班级名称',
-      key: 'name',
+      name: '性别',
+      key: 'sex',
       order: 2,
     },
     {
-      name: '所属专业',
-      key: 'facultyId',
+      name: '手机号',
+      key: 'mobile',
       order: 3,
     },
     {
-      name: '所属年级',
-      key: 'gradeId',
+      name: '用户类型',
+      key: 'userType',
       order: 4,
     },
     {
-      name: '所属专业',
-      key: 'majorId',
+      name: '所属部门',
+      key: 'deptId',
       order: 5,
     },
     {
-      name: '所属年级',
-      key: 'gradeId',
+      name: '身份证',
+      key: 'idCard',
       order: 6,
     },
     {
-      name: '班主任',
-      key: 'teacherId',
+      name: '出生年月',
+      key: 'birthday',
       order: 7,
     },
     {
-      name: '管理员',
-      key: 'adminId',
+      name: '用户账号',
+      key: 'loginName',
       order: 8,
     },
     {
-      name: '是否有效',
-      key: 'isValid',
-      order: 11,
+      name: '状态',
+      key: 'state',
+      order: 9,
     },
   ])
 );

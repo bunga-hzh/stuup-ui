@@ -1,5 +1,8 @@
 <template>
   <div class="home-contaienr">
+    <Alert scroll type="success" :icon="Bullhorn">
+      要使整个人生都过得舒适、愉快，这是不可能的，因为人类必须具备一种能应付逆境的态度。
+    </Alert>
     <div class="operation-layer">
       <div class="hint" v-show="show_hint"></div>
       <Leaderboard class="leaderboard" />

@@ -52,6 +52,9 @@ const viteConfig = defineConfig(async (mode: ConfigEnv) => {
         '@': path.resolve(__dirname, './src'),
       },
     },
+    server: {
+      port: 1111,
+    },
   };
 });
 

@@ -4,22 +4,25 @@
       <div style="width: 100%">
         <ConfigProvider :props="searchProvidedProps">
           <Form :model="search">
-            <FormItem label="班级编号" prop="code">
+            <FormItem label="学号" prop="studentNo">
               <Input />
             </FormItem>
-            <FormItem label="班级名称" prop="name">
+            <FormItem label="学生姓名" prop="name">
+              <Input />
+            </FormItem>
+            <FormItem label="性别" prop="sex">
               <Select :options="sexDict" clearable />
             </FormItem>
-            <FormItem label="所属年级" prop="gradeId">
+            <FormItem label="所属部门" prop="facultyId">
               <Select :options="deptDict" clearable />
             </FormItem>
-            <FormItem label="所属部门" prop="facultyId">
+            <FormItem label="所属年级" prop="gradeId">
               <Select :options="deptDict" clearable />
             </FormItem>
             <FormItem label="所属专业" prop="majorId">
               <Select :options="deptDict" clearable />
             </FormItem>
-            <FormItem label="班主任" prop="teacherId">
+            <FormItem label="状态" prop="state">
               <Select :options="stateDict" clearable />
             </FormItem>
             <FormItem action>
@@ -69,29 +72,35 @@
       @close="handleModelColse">
       <ConfigProvider :props="providedProps">
         <Form ref="formRef" :model="form" label-align="top">
-          <FormItem label="班级编号" prop="code">
+          <FormItem label="教师姓名" prop="name">
             <Input />
           </FormItem>
-          <FormItem label="班级名称" prop="name">
-            <Select :options="sexDict" clearable />
+          <FormItem label="教师工号" prop="jobNo">
+            <Input />
           </FormItem>
-          <FormItem label="所属年级" prop="gradeId">
-            <Select :options="deptDict" clearable />
+          <FormItem label="性别" prop="sex">
+            <Select :options="sexDict" clearable />
           </FormItem>
           <FormItem label="所属部门" prop="facultyId">
             <Select :options="deptDict" clearable />
           </FormItem>
-          <FormItem label="所属专业" prop="majorId">
-            <Select :options="deptDict" clearable />
+          <FormItem label="教研组" prop="teachGroup">
+            <Input />
           </FormItem>
-          <FormItem label="班主任" prop="teacherId">
+          <FormItem label="手机号" prop="phone">
+            <Input />
+          </FormItem>
+          <FormItem label="身份证号" prop="idCard">
+            <Input />
+          </FormItem>
+          <FormItem label="地址" prop="address">
+            <Input />
+          </FormItem>
+          <FormItem label="状态" prop="state">
             <Select :options="stateDict" clearable />
           </FormItem>
-          <FormItem label="管理员" prop="adminId">
-            <Select :options="stateDict" clearable />
-          </FormItem>
-          <FormItem label="是否有效" prop="isValid">
-            <Select :options="stateDict" clearable />
+          <FormItem label="教师类型" prop="type">
+            <Select :options="typeDict" clearable />
           </FormItem>
         </Form>
       </ConfigProvider>
@@ -163,18 +172,18 @@ const formRef = ref();
 const columns = ref(
   defineColumns([
     {
-      name: '班号',
-      key: 'code',
+      name: '学号',
+      key: 'studentNo',
       order: 1,
     },
     {
-      name: '班级名称',
+      name: '学生姓名',
       key: 'name',
       order: 2,
     },
     {
-      name: '所属专业',
-      key: 'facultyId',
+      name: '所属班级',
+      key: 'classId',
       order: 3,
     },
     {
@@ -188,24 +197,29 @@ const columns = ref(
       order: 5,
     },
     {
-      name: '所属年级',
-      key: 'gradeId',
+      name: '身份证',
+      key: 'idCard',
       order: 6,
     },
     {
-      name: '班主任',
-      key: 'teacherId',
+      name: '性别',
+      key: 'sex',
       order: 7,
     },
     {
-      name: '管理员',
-      key: 'adminId',
+      name: '民族',
+      key: 'nation',
       order: 8,
     },
     {
-      name: '是否有效',
-      key: 'isValid',
-      order: 11,
+      name: '手机号',
+      key: 'phone',
+      order: 9,
+    },
+    {
+      name: '状态',
+      key: 'state',
+      order: 10,
     },
   ])
 );

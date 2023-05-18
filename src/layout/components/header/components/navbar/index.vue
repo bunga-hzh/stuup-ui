@@ -1,5 +1,5 @@
 <template>
-  <Menu horizontal>
+  <Menu ref="menu" horizontal :active="$route.path" manual-route accordion>
     <v-menu-item :routes="premissionStore.getFrontAsideRouters" />
   </Menu>
 </template>

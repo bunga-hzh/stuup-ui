@@ -9,7 +9,7 @@
         :icon="isCollapse ? AnglesRight : AnglesLeft" />
     </div>
     <div class="side">
-      <Menu :reduced="isCollapse" style="border-right: 0">
+      <Menu :reduced="isCollapse" style="border-right: 0" :active="$route.path" manual-route>
         <v-menu-item :routes="premissionStore.getBackAsideRouters" />
       </Menu>
     </div>

@@ -4,23 +4,11 @@
       <div style="width: 100%">
         <ConfigProvider :props="searchProvidedProps">
           <Form :model="search">
-            <FormItem label="班级编号" prop="code">
+            <FormItem label="角色名称" prop="roleName">
               <Input />
             </FormItem>
-            <FormItem label="班级名称" prop="name">
-              <Select :options="sexDict" clearable />
-            </FormItem>
-            <FormItem label="所属年级" prop="gradeId">
-              <Select :options="deptDict" clearable />
-            </FormItem>
-            <FormItem label="所属部门" prop="facultyId">
-              <Select :options="deptDict" clearable />
-            </FormItem>
-            <FormItem label="所属专业" prop="majorId">
-              <Select :options="deptDict" clearable />
-            </FormItem>
-            <FormItem label="班主任" prop="teacherId">
-              <Select :options="stateDict" clearable />
+            <FormItem label="角色编号" prop="roleCode">
+              <Input />
             </FormItem>
             <FormItem action>
               <Button type="primary" @click="handlerSearch">查询</Button>
@@ -41,10 +29,11 @@
         :key-config="{ id: 'oid' }"
         :current-page="currentPage"
         :page-size="pageSize">
-        <TableColumn name="操作" id-key="menu" :order="11" text-align="center" :width="200">
+        <TableColumn name="操作" id-key="menu" :order="4" text-align="center" :width="300">
           <template #default="{ row }">
             <Button @click="updateRow(row)">修改</Button>
             <Button @click="delRow(row.oid)">删除</Button>
+            <Button @click="rolePermission(row.oid)">权限分配</Button>
           </template>
         </TableColumn>
       </Table>
@@ -69,29 +58,14 @@
       @close="handleModelColse">
       <ConfigProvider :props="providedProps">
         <Form ref="formRef" :model="form" label-align="top">
-          <FormItem label="班级编号" prop="code">
+          <FormItem label="角色名称" prop="roleName">
             <Input />
           </FormItem>
-          <FormItem label="班级名称" prop="name">
-            <Select :options="sexDict" clearable />
+          <FormItem label="角色编号" prop="roleCode">
+            <Input />
           </FormItem>
-          <FormItem label="所属年级" prop="gradeId">
-            <Select :options="deptDict" clearable />
-          </FormItem>
-          <FormItem label="所属部门" prop="facultyId">
-            <Select :options="deptDict" clearable />
-          </FormItem>
-          <FormItem label="所属专业" prop="majorId">
-            <Select :options="deptDict" clearable />
-          </FormItem>
-          <FormItem label="班主任" prop="teacherId">
-            <Select :options="stateDict" clearable />
-          </FormItem>
-          <FormItem label="管理员" prop="adminId">
-            <Select :options="stateDict" clearable />
-          </FormItem>
-          <FormItem label="是否有效" prop="isValid">
-            <Select :options="stateDict" clearable />
+          <FormItem label="角色描述" prop="roleDesc">
+            <Textarea />
           </FormItem>
         </Form>
       </ConfigProvider>
@@ -101,7 +75,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue';
-import { Select, defineColumns } from 'vexip-ui';
+import { defineColumns } from 'vexip-ui';
 import { PaginationResult } from '@/types/global';
 import { queryTeacher, TeacherQueryType } from '@/api/teacher/index';
 
@@ -163,49 +137,19 @@ const formRef = ref();
 const columns = ref(
   defineColumns([
     {
-      name: '班号',
-      key: 'code',
+      name: '角色名称',
+      key: 'roleName',
       order: 1,
     },
     {
-      name: '班级名称',
-      key: 'name',
+      name: '角色编号',
+      key: 'roleCode',
       order: 2,
     },
     {
-      name: '所属专业',
-      key: 'facultyId',
+      name: '角色描述',
+      key: 'roleDesc',
       order: 3,
-    },
-    {
-      name: '所属年级',
-      key: 'gradeId',
-      order: 4,
-    },
-    {
-      name: '所属专业',
-      key: 'majorId',
-      order: 5,
-    },
-    {
-      name: '所属年级',
-      key: 'gradeId',
-      order: 6,
-    },
-    {
-      name: '班主任',
-      key: 'teacherId',
-      order: 7,
-    },
-    {
-      name: '管理员',
-      key: 'adminId',
-      order: 8,
-    },
-    {
-      name: '是否有效',
-      key: 'isValid',
-      order: 11,
     },
   ])
 );
@@ -251,6 +195,9 @@ const addRow = () => {
   modelTitle.value = '添加';
   active.value = true;
 };
+
+const rolePermission = (roleIId: number) => {};
+
 const updateRow = (row: TeacherTableType) => {
   modelTitle.value = '修改';
   active.value = true;

@@ -3,7 +3,10 @@
     <table-layout>
       <template #search>
         <Form :model="search" style="width: 100%">
-          <FormItem label="年份名称" prop="yearName">
+          <FormItem label="项目名称" prop="name">
+            <Input />
+          </FormItem>
+          <FormItem label="审核状态" prop="state">
             <Input />
           </FormItem>
         </Form>
@@ -12,11 +15,6 @@
         <Space vertical>
           <Button type="primary" @click="handlerSearch">查询</Button>
           <Button>清空</Button>
-        </Space>
-      </template>
-      <template #toolbarLeft>
-        <Space>
-          <Button type="primary" @click="addRow">添加</Button>
         </Space>
       </template>
       <template #toolbarRight>
@@ -35,10 +33,11 @@
           :current-page="current"
           :page-size="size"
           style="min-width: 1000px">
-          <TableColumn name="操作" id-key="menu" :order="7" text-align="center" :width="200">
+          <TableColumn name="操作" id-key="menu" :order="7" text-align="center" :width="300">
             <template #default="{ row }">
-              <Button @click="updateRow(row)">修改</Button>
-              <Button @click="delRow(row.oid)">删除</Button>
+              <Button>详情</Button>
+              <Button>通过</Button>
+              <Button>拒绝</Button>
             </template>
           </TableColumn>
         </Table>
@@ -134,34 +133,24 @@ const formRef = ref();
 const columns = ref(
   defineColumns([
     {
-      name: '年份名称',
-      key: 'yearName',
+      name: '项目名称',
+      key: 'name',
       order: 1,
     },
     {
-      name: '开始时间',
-      key: 'yearStart',
+      name: '项目积分',
+      key: 'integral',
       order: 2,
     },
     {
-      name: '结束时间',
-      key: 'yearEnd',
+      name: '申请人',
+      key: 'studentId',
       order: 3,
     },
     {
-      name: '上学期起止时间',
-      key: 'lastSemester',
+      name: '审核状态',
+      key: 'state',
       order: 4,
-    },
-    {
-      name: '下学期起止时间',
-      key: 'nextSemester',
-      order: 5,
-    },
-    {
-      name: '创建时间',
-      key: 'createTime',
-      order: 6,
     },
   ])
 );

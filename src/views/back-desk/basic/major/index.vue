@@ -38,7 +38,7 @@
           v-model:active="currentPage"
           :plugins="['total', 'size', 'jump']"
           :total="data.length"
-          :page-size="pageSize"></Pagination>
+          :page-size="pageSize" />
       </div>
     </Space>
 
