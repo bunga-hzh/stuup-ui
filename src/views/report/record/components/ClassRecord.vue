@@ -43,31 +43,27 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
-import { defineColumns } from 'vexip-ui';
-import type { Pagination } from '@/types/global';
 
-const page = reactive<Pagination>({
+const page = reactive({
   current: 1,
   size: 10,
   total: 1,
 });
 
-const columns = ref(
-  defineColumns([
-    {
-      name: '年纪',
-      key: 'grade',
-    },
-    {
-      name: '班级',
-      key: 'class',
-    },
-    {
-      name: '总成长值',
-      key: 'totalScore',
-    },
-  ])
-);
+const columns = ref([
+  {
+    name: '年纪',
+    key: 'grade',
+  },
+  {
+    name: '班级',
+    key: 'class',
+  },
+  {
+    name: '总成长值',
+    key: 'totalScore',
+  },
+]);
 
 const data = ref([
   {

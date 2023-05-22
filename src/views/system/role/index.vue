@@ -95,8 +95,8 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
-import { getRolePage, saveRole, RoleVO } from '@/api/system/role/index';
-import { ElMessage } from 'element-plus';
+import { getRolePage, saveRole, delRole, RoleVO } from '@/api/system/role/index';
+import { ElMessage, ElMessageBox } from 'element-plus';
 
 onMounted(() => {
   fetchList();
@@ -157,7 +157,22 @@ const updateRow = (row: RoleVO) => {
   form.value.roleDesc = row.roleDesc;
 };
 const delRow = (oid: number) => {
-  console.log(oid);
+  ElMessageBox.confirm('确认删除？', '删除角色', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning',
+  })
+    .then(async () => {
+      loading.value = true;
+      try {
+        const res = await delRole(oid);
+        ElMessage.success(res.message);
+        fetchList();
+      } finally {
+        loading.value = false;
+      }
+    })
+    .catch(() => {});
 };
 
 const submitForm = async () => {

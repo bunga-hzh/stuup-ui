@@ -53,7 +53,6 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
-import { defineColumns } from 'vexip-ui';
 const search = reactive({});
 const page = reactive({
   current: 1,
@@ -62,60 +61,58 @@ const page = reactive({
 });
 const data = ref([]);
 
-const columns = ref(
-  defineColumns([
-    {
-      name: '年纪',
-      key: 'grade',
-      order: 1,
-    },
-    {
-      name: '班级',
-      key: 'class',
-      order: 2,
-    },
-    {
-      name: '姓名',
-      key: 'studentName',
-      order: 3,
-    },
-    {
-      name: '学号',
-      key: 'studentNo',
-      order: 4,
-    },
-    {
-      name: '证件号',
-      key: 'idCard',
-      order: 5,
-    },
-    {
-      name: '社团名称',
-      key: 'name',
-      order: 6,
-    },
-    {
-      name: '级别',
-      key: 'level',
-      order: 7,
-    },
-    {
-      name: '开始时间',
-      key: 'stratTime',
-      order: 8,
-    },
-    {
-      name: '结束时间',
-      key: 'stratTime',
-      order: 9,
-    },
-    {
-      name: '角色',
-      key: 'role',
-      order: 10,
-    },
-  ])
-);
+const columns = ref([
+  {
+    name: '年纪',
+    key: 'grade',
+    order: 1,
+  },
+  {
+    name: '班级',
+    key: 'class',
+    order: 2,
+  },
+  {
+    name: '姓名',
+    key: 'studentName',
+    order: 3,
+  },
+  {
+    name: '学号',
+    key: 'studentNo',
+    order: 4,
+  },
+  {
+    name: '证件号',
+    key: 'idCard',
+    order: 5,
+  },
+  {
+    name: '社团名称',
+    key: 'name',
+    order: 6,
+  },
+  {
+    name: '级别',
+    key: 'level',
+    order: 7,
+  },
+  {
+    name: '开始时间',
+    key: 'stratTime',
+    order: 8,
+  },
+  {
+    name: '结束时间',
+    key: 'stratTime',
+    order: 9,
+  },
+  {
+    name: '角色',
+    key: 'role',
+    order: 10,
+  },
+]);
 </script>
 
 <style scoped lang="scss"></style>

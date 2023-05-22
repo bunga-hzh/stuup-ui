@@ -16,3 +16,7 @@ export const getRolePage = async (params: Page): Promise<ApiResult<PageResult<Ro
 export const saveRole = async (data: RoleVO): Promise<ApiResult<number>> => {
   return await post('/role/save', data);
 };
+
+export const delRole = async (roleIds: string | number) => {
+  return await post('/role/del/', { ids: roleIds });
+};

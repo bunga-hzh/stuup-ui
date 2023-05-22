@@ -36,8 +36,6 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { Space } from 'vexip-ui';
-import { Check } from '@vexip-ui/icons';
 const headerStyle = {
   'justify-content': 'center',
   'font-size': '24px',
