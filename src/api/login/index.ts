@@ -1,11 +1,21 @@
-import { post } from '@/api/api';
+import { ApiResult, post } from '@/api/api';
 
 export interface LoginForm {
   loginName: string;
   password: string;
 }
 
-export const login = async (data: LoginForm) => {
+export interface LoginUserVO {
+  userId: number;
+  loginName: string;
+  userName: string;
+  mobile: string;
+  deptId: number;
+  userType: number;
+  roleIds: string;
+}
+
+export const login = async (data: LoginForm): Promise<ApiResult<LoginUserVO>> => {
   return post('/login', data);
 };
 

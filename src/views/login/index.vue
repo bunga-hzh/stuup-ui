@@ -3,30 +3,33 @@
     <div class="login">
       <h2>登入</h2>
       <div class="login-form">
-        <Form :model="form" :rules="rules" label-align="top">
-          <FormItem label="用户名" prop="loginName">
-            <Input></Input>
-          </FormItem>
-          <FormItem label="密码" prop="password">
-            <Input type="password" plain-password></Input>
-          </FormItem>
-          <FormItem action>
-            <FormSubmit @submit="handleSubmit" @error="handleError" style="width: 100%">登入</FormSubmit>
-          </FormItem>
-        </Form>
+        <el-form :model="form" :rules="rules" label-position="top">
+          <el-form-item label="用户名" prop="loginName">
+            <el-input v-model="form.loginName" />
+          </el-form-item>
+          <el-form-item label="密码" prop="password">
+            <el-input v-model="form.password" type="password" show-password />
+          </el-form-item>
+          <el-form-item action>
+            <el-button type="primary" style="width: 100%" :loading="loading" @click="handleLogin">登入</el-button>
+          </el-form-item>
+        </el-form>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue';
+import { ref, reactive } from 'vue';
 import { useUserStore } from '@/store/modules/user';
 import { LoginForm, login, loginOut } from '@/api/login/index';
 import router from '@/router/index';
 import { setToken } from '@/utils/auth';
+import { ElMessage } from 'element-plus';
 
 const userStore = useUserStore();
+
+const loading = ref<boolean>(false);
 
 const form = reactive<LoginForm>({
   loginName: '',
@@ -44,21 +47,25 @@ const rules = {
   },
 };
 
-const handleSubmit = async () => {
-  const res = await login(form);
-  setToken(res.token);
-  userStore.setUserId(res.userId);
-  userStore.setLoginName(res.loginName);
-  userStore.setUserName(res.userName);
-  userStore.setMobile(res.mobile);
-  userStore.setDeptId(res.deptId);
-  userStore.setUserType(res.userType);
-  userStore.setRoleId(res.roleIds);
-  router.push('/');
-  Message.success('登入成功');
-};
-const handleError = (errors: string[]) => {
-  Message.error(errors);
+const handleLogin = async () => {
+  try {
+    loading.value = true;
+    const res = await login(form);
+    setToken(res.token as string);
+    userStore.setUserId(res.data.userId);
+    userStore.setLoginName(res.data.loginName);
+    userStore.setUserName(res.data.userName);
+    userStore.setMobile(res.data.mobile);
+    userStore.setDeptId(res.data.deptId);
+    userStore.setUserType(res.data.userType);
+    userStore.setRoleId(res.data.roleIds);
+    router.push('/');
+    ElMessage.success('登入成功');
+  } catch {
+    form.password = '';
+  } finally {
+    loading.value = false;
+  }
 };
 </script>
 

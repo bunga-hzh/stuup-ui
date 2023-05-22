@@ -1,0 +1,111 @@
+<template>
+  <el-container>
+    <el-header>
+      <div class="logo">LOGO</div>
+      <div class="navigation">
+        <div>
+          <Menu v-show="layout_type" mode="horizontal" :routes="premissionStore.getFrontAsideRouters" />
+        </div>
+        <div class="toolbar">
+          <el-space>
+            <el-switch
+              v-model="layout_type"
+              inline-prompt
+              style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
+              active-text="前往后台"
+              inactive-text="前往前台" />
+            <el-avatar :size="50" src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png" />
+          </el-space>
+        </div>
+      </div>
+    </el-header>
+    <el-container>
+      <el-aside width="200px" v-show="!layout_type">
+        <div class="navigation">
+          <Menu :routes="premissionStore.getBackAsideRouters" />
+        </div>
+        <div class="unfold-btn">展开</div>
+      </el-aside>
+      <el-container>
+        <el-main><RouterView /></el-main>
+        <el-footer>Footer</el-footer>
+      </el-container>
+    </el-container>
+  </el-container>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue';
+import Menu from './components/Menu.vue';
+import { usePermissionStore } from '@/store/modules/premission';
+
+const premissionStore = usePermissionStore();
+
+const layout_type = ref<boolean>(true);
+</script>
+
+<style lang="scss" scoped>
+.el-container {
+  width: 100%;
+  height: 100%;
+
+  .el-main {
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .el-menu {
+    border: 0;
+  }
+
+  .el-header {
+    border-bottom: 1px solid #eee;
+    display: flex;
+
+    .logo {
+      width: 200px;
+    }
+    .navigation {
+      flex: 1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .toolbar {
+        display: flex;
+        justify-content: end;
+        align-items: center;
+      }
+    }
+  }
+  .el-aside {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border-right: 1px solid #eee;
+    overflow-x: hidden;
+
+    .navigation {
+      flex: 1;
+      height: 100%;
+      overflow-y: auto;
+    }
+    .unfold-btn {
+      border-top: 1px solid #eee;
+      background-color: red;
+      height: 60px;
+    }
+  }
+
+  .el-main {
+    margin: 0;
+    padding: 0;
+  }
+
+  .el-footer {
+    border-top: 1px solid #eee;
+    line-height: 60px;
+  }
+}
+</style>

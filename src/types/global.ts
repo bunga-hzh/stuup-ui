@@ -1,14 +1,13 @@
-export interface Pagination {
+export interface Page {
   current: number;
-  pageSize: number;
-  total?: number;
+  size: number;
 }
 
-export interface PaginationResult {
+export interface PageResult<T> {
   current: number;
-  pageSize: number;
+  size: number;
   total: number;
-  records: any[];
+  records: T;
   pages: number;
   start: number;
 }

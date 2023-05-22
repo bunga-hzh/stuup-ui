@@ -3,8 +3,8 @@ import vue from '@vitejs/plugin-vue';
 import path from 'path';
 import Components from 'unplugin-vue-components/vite';
 import AutoImport from 'unplugin-auto-import/vite';
-import { VexipUIResolver } from '@vexip-ui/plugins';
 import postcsspxtoviewport from 'postcss-px-to-viewport-update';
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 
 // https://vitejs.dev/config/
 const viteConfig = defineConfig(async (mode: ConfigEnv) => {
@@ -12,19 +12,11 @@ const viteConfig = defineConfig(async (mode: ConfigEnv) => {
   return {
     plugins: [
       vue(),
-      Components({
-        resolvers: [VexipUIResolver()],
-      }),
       AutoImport({
-        vueTemplate: true,
-        resolvers: [VexipUIResolver()],
-        imports: [
-          {
-            '@vexip-ui/icons': Object.keys(await import('@vexip-ui/icons'))
-              // 使通过变量使用的图标类组件的名称也具有 'I' 前缀
-              .map(name => (name.match(/^I[0-9]/) ? name : [name, `I${name}`])),
-          },
-        ],
+        resolvers: [ElementPlusResolver()],
+      }),
+      Components({
+        resolvers: [ElementPlusResolver()],
       }),
     ],
     css: {
@@ -42,7 +34,7 @@ const viteConfig = defineConfig(async (mode: ConfigEnv) => {
             mediaQuery: true, // 是否在媒体查询的css代码中也进行转换，默认false
             replace: true, // 是否转换后直接更换属性值
             landscape: false, // 是否处理横屏情况
-            include: [/src\/views\/front-desk\/home\/index/],
+            include: [/src\/views\/index/],
           }),
         ],
       },

@@ -3,6 +3,7 @@ export interface ApiResult<T> {
   code: number;
   message: string;
   data: T;
+  token?: string;
 }
 export async function get<T>(url: string, params?: any): Promise<ApiResult<T>> {
   const response = await axiosInstance.get<ApiResult<T>>(url, { params });

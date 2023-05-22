@@ -1,4 +1,7 @@
 :root {
+  --layout-structure-header: 64px;
+  --layout-structure-aside: 200px;
+  --layout-structure-footer: 40px;
   --base-font-size: 14px;
   --base-card-gauge: 16px;
   --base-card-radius: 8px;

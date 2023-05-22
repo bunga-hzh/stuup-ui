@@ -6,13 +6,35 @@ body,
 #app {
   margin: 0;
   padding: 0;
-  width: 100%;
-  height: 100%;
-  // background: #ffffff;
-  // overflow: hidden;
-  font-size: var(--base-font-size);
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .b1 {
   border: 1px solid red;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.page-box {
+  margin-top: 10px;
+  display: flex;
+  justify-content: end;
+  align-items: center;
+}
+
+.w-full {
+  width: 100%;
+}
+.w-hull {
+  height: 100%;
+}
+
+.block {
+  display: block;
 }

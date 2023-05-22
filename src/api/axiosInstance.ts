@@ -1,6 +1,6 @@
 import axios, { InternalAxiosRequestConfig, AxiosInstance, AxiosResponse } from 'axios';
 import { getToken } from '@/utils/auth';
-import { Message } from 'vexip-ui';
+import { ElMessage } from 'element-plus'
 
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -28,14 +28,14 @@ axiosInstance.interceptors.response.use(
     const code = data.code;
     const msg = data.message;
     if (code !== 0) {
-      Message.error(msg);
+        ElMessage.error(msg);
       return Promise.reject(msg);
     }
     return response;
   },
   (error: any) => {
     // 处理响应错误
-    Message.error(error.message);
+      ElMessage.error(error.message);
     return Promise.reject(error);
   }
 );

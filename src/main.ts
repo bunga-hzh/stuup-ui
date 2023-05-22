@@ -1,8 +1,11 @@
 // pinia
 import { setupStore } from '@/store';
 
-// VexipIcon
-import { setupVexipIcon } from '@/plugins/VexipIcon';
+// Element Plus
+import { setupElementPlusIcon } from '@/plugins/ElementPlus';
+
+// From-create
+import { setupFormCreate } from '@/plugins/FormCreate';
 
 // 路由
 import { setupRouter } from '@/router';
@@ -14,6 +17,8 @@ import { createApp } from 'vue';
 
 import App from './App.vue';
 
+import 'element-plus/dist/index.css';
+
 import './styles/index.scss';
 
 import './premission';
@@ -22,7 +27,8 @@ const setupAll = async () => {
   const app = createApp(App);
   setupStore(app);
   setupRouter(app);
-  setupVexipIcon(app);
+  setupElementPlusIcon(app);
+  setupFormCreate(app);
   setupGlobalComponents(app);
   app.mount('#app');
 };

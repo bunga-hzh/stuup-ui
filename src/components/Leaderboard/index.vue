@@ -1,4 +1,11 @@
 <template>
+  <div>aaa</div>
+</template>
+
+<script setup lang="ts"></script>
+
+<style scoped lang="scss"></style>
+<!-- <template>
     <div class="leaderboard-container">
         <div class="btn"></div>
         <transition name="fade">
@@ -88,4 +95,4 @@ onMounted(() => {
     box-sizing: border-box;
   }
 }
-</style>
+</style> -->

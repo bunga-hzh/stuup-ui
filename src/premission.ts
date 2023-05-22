@@ -1,8 +1,8 @@
 import router from '@/router';
 import NProgress from '@/utils/progress';
 import { existToken } from '@/utils/auth';
-import { usePermissionStoreWithOut, Menu } from '@/store/modules/premission';
-import { queryUserAuthority } from '@/api/user/index';
+import { usePermissionStoreWithOut } from '@/store/modules/premission';
+import { queryUserAuthority } from '@/api/system/user/index';
 
 const whiteList: string[] = ['/login', '/404'];
 
@@ -15,9 +15,8 @@ router.beforeEach(async (to, form, next) => {
     } else {
       const premissionStore = usePermissionStoreWithOut();
       if (!premissionStore.getRouters.length) {
-        const res = await queryUserAuthority();
-        const data = res.data as Menu[];
-        premissionStore.generateRoutes(data);
+        const { data: res } = await queryUserAuthority();
+        premissionStore.generateRoutes(res);
         next({ ...to, replace: true });
       } else {
         next();
