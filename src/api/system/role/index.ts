@@ -9,6 +9,11 @@ export interface RoleVO {
   createTime?: Date;
 }
 
+export interface RoleMenuVO {
+  roleId: number;
+  menuIds: number[];
+}
+
 export const getRolePage = async (params: Page): Promise<ApiResult<PageResult<RoleVO[]>>> => {
   return await get('/role/list', params);
 };
@@ -23,4 +28,11 @@ export const delRole = async (roleIds: string | number) => {
 
 export const getRoleMenu = async (roleId: string | number): Promise<ApiResult<number[]>> => {
   return await get('/role/getRoleMenu/' + roleId);
+};
+
+export const setRoleMenu = async (roleId: number, menuIds: number[]) => {
+  return await post('/role/setRoleMenu', {
+    roleId,
+    menuIds,
+  });
 };

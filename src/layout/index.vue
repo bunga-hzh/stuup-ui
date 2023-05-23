@@ -22,9 +22,14 @@
     <el-container>
       <el-aside width="200px" v-show="!layout_type">
         <div class="navigation">
-          <Menu :routes="premissionStore.getBackAsideRouters" />
+          <Menu :routes="premissionStore.getBackAsideRouters" :collapse="isFold" />
         </div>
-        <div class="unfold-btn">展开</div>
+        <div class="unfold-btn">
+          <el-icon @click="isFold = !isFold">
+            <Fold v-show="!isFold" />
+            <Expand v-show="isFold" />
+          </el-icon>
+        </div>
       </el-aside>
       <el-container>
         <el-main><RouterView /></el-main>
@@ -42,6 +47,7 @@ import { usePermissionStore } from '@/store/modules/premission';
 const premissionStore = usePermissionStore();
 
 const layout_type = ref<boolean>(true);
+const isFold = ref<boolean>(false);
 </script>
 
 <style lang="scss" scoped>
@@ -93,8 +99,9 @@ const layout_type = ref<boolean>(true);
     }
     .unfold-btn {
       border-top: 1px solid #eee;
-      background-color: red;
-      height: 60px;
+      line-height: 40px;
+      height: 40px;
+      text-align: center;
     }
   }
 
