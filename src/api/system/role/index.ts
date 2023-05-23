@@ -20,3 +20,7 @@ export const saveRole = async (data: RoleVO): Promise<ApiResult<number>> => {
 export const delRole = async (roleIds: string | number) => {
   return await post('/role/del/', { ids: roleIds });
 };
+
+export const getRoleMenu = async (roleId: string | number): Promise<ApiResult<number[]>> => {
+  return await get('/role/getRoleMenu/' + roleId);
+};

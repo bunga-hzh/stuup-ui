@@ -1,6 +1,6 @@
 <template>
   <div v-for="(route, index) in routes" :key="route.path + index">
-    <el-sub-menu v-if="hasChild(route)" :index="route.path">
+    <el-sub-menu v-if="route.children && route.children.length" :index="route.path">
       <template #title>{{ route.name }}</template>
       <menu-item :routes="route.children" />
     </el-sub-menu>
@@ -15,10 +15,6 @@ type Props<T> = {
 };
 
 defineProps<Props<MenuVO>>();
-
-const hasChild = (router: MenuVO): boolean => {
-  return router.children && router.children.length > 0;
-};
 </script>
 
 <style scoped lang="scss"></style>

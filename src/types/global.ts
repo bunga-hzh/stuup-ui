@@ -11,3 +11,9 @@ export interface PageResult<T> {
   pages: number;
   start: number;
 }
+
+export interface Tree {
+  key: string;
+  value: any;
+  children: Tree[];
+}

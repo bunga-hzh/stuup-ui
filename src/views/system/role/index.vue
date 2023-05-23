@@ -45,9 +45,11 @@
         <el-table-column prop="roleName" label="角色名称" show-overflow-tooltip align="center" />
         <el-table-column prop="roleDesc" label="角色描述" show-overflow-tooltip align="center" />
         <el-table-column prop="createTime" label="创建时间" show-overflow-tooltip align="center" />
-        <el-table-column label="操作" width="200" align="center">
+        <el-table-column label="操作" width="400" align="center">
           <template #default="{ row }">
             <el-button @click="updateRow(row)">修改</el-button>
+            <el-button @click="openRoleMenuTree(row.oid)">角色权限</el-button>
+            <el-button>角色用户</el-button>
             <el-button @click="delRow(row.oid)" type="danger">删除</el-button>
           </template>
         </el-table-column>
@@ -64,32 +66,33 @@
           layout="total, sizes, prev, pager, next" />
       </div>
     </el-card>
+    <el-dialog v-model="dialog_active" :title="dialog_title" width="500" draggable @close="resetForm">
+      <el-form ref="formRef" :model="form" :rules="rules" :disabled="loading" label-position="top">
+        <el-form-item label="角色名称" prop="roleName">
+          <el-input v-model="form.roleName" placeholder="请输入角色名称" />
+        </el-form-item>
+        <el-form-item label="角色描述" prop="roleDesc">
+          <el-input
+            v-model="form.roleDesc"
+            type="textarea"
+            maxlength="500"
+            placeholder="请输入角色描述"
+            show-word-limit />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="dialog_active = false">
+          <el-icon><Close /></el-icon>
+          取消
+        </el-button>
+        <el-button type="primary" :loading="loading" @click="submitForm">
+          <el-icon><Check /></el-icon>
+          提交
+        </el-button>
+      </template>
+    </el-dialog>
+    <RoleMenuTree ref="menuTreeRef" />
   </div>
-  <el-dialog v-model="dialog_active" :title="dialog_title" width="500" draggable @close="resetForm">
-    <el-form ref="formRef" :model="form" :rules="rules" :disabled="loading" label-position="top">
-      <el-form-item label="角色名称" prop="roleName">
-        <el-input v-model="form.roleName" placeholder="请输入角色名称" />
-      </el-form-item>
-      <el-form-item label="角色描述" prop="roleDesc">
-        <el-input
-          v-model="form.roleDesc"
-          type="textarea"
-          maxlength="500"
-          placeholder="请输入角色描述"
-          show-word-limit />
-      </el-form-item>
-    </el-form>
-    <template #footer>
-      <el-button @click="dialog_active = false">
-        <el-icon><Close /></el-icon>
-        取消
-      </el-button>
-      <el-button type="primary" :loading="loading" @click="submitForm">
-        <el-icon><Check /></el-icon>
-        提交
-      </el-button>
-    </template>
-  </el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -97,6 +100,7 @@ import { ref, onMounted, reactive } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
 import { getRolePage, saveRole, delRole, RoleVO } from '@/api/system/role/index';
 import { ElMessage, ElMessageBox } from 'element-plus';
+import RoleMenuTree from './components/RoleMenuTree.vue';
 
 onMounted(() => {
   fetchList();
@@ -124,6 +128,7 @@ const rules = reactive<FormRules>({
 });
 const searchFormRef = ref<FormInstance>();
 const formRef = ref<FormInstance>();
+const menuTreeRef = ref();
 
 const fetchList = async () => {
   loading.value = true;
@@ -189,6 +194,10 @@ const submitForm = async () => {
   } finally {
     loading.value = false;
   }
+};
+
+const openRoleMenuTree = async (roleId: number) => {
+  menuTreeRef.value.open(roleId);
 };
 
 const resetForm = () => {

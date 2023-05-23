@@ -1,4 +1,5 @@
 import { ApiResult, get, post } from '@/api/api';
+import { Tree } from '@/types/global';
 
 export interface MenuVO {
   oid?: number;
@@ -19,4 +20,8 @@ export const getMenuTree = async (params: { name?: string; code?: string }): Pro
 
 export const saveMenu = async (data: MenuVO): Promise<ApiResult<number>> => {
   return await post('/user/save', data);
+};
+
+export const menuTree = async (): Promise<ApiResult<Tree[]>> => {
+  return await get('/menu/tree');
 };
