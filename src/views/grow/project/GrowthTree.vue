@@ -1,9 +1,13 @@
 <template>
-  <el-card>
+  <el-card style="margin-top: 10px">
     <template #header>
       <div class="card-header">
         <span>成长项目</span>
         <el-space>
+          <el-button type="primary" :loading="loading" @click="queryAll">
+            <el-icon><Search /></el-icon>
+            查询全部
+          </el-button>
           <el-button type="primary" :loading="loading" @click="addRow">
             <el-icon><Plus /></el-icon>
             添加
@@ -26,6 +30,7 @@
       default-expand-all
       :data="treeData"
       :props="props"
+      :expand-on-click-node="false"
       :filter-node-method="filterNode"
       @node-click="handleNodeClick" />
     <el-dialog v-model="active" :title="title" width="20%" @close="handleDialogClose">
@@ -121,6 +126,10 @@ const fetchGetGrowthTree = async () => {
   } finally {
     loading.value = false;
   }
+};
+
+const queryAll = () => {
+  Bus.emit('reset-id');
 };
 
 const addRow = () => {

@@ -1,7 +1,9 @@
 <template>
   <el-container>
     <el-header>
-      <div class="logo">LOGO</div>
+      <div class="logo">
+        <img :src="logo" width="200" />
+      </div>
       <div class="navigation">
         <div>
           <Menu v-show="layout_type" mode="horizontal" :routes="premissionStore.getFrontAsideRouters" />
@@ -41,8 +43,9 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import Menu from './components/Menu.vue';
 import { usePermissionStore } from '@/store/modules/premission';
+import Menu from './components/Menu.vue';
+import logo from '@/assets/logo.png';
 
 const premissionStore = usePermissionStore();
 

@@ -1,5 +1,5 @@
 <template>
-  <el-row>
+  <el-row style="margin-top: 10px">
     <el-col :span="24">
       <el-card>
         <template #header>
@@ -183,7 +183,12 @@ Bus.on('get-tree', (growthTree: GrowthTreeVO) => {
 });
 
 Bus.on('node-click', (id: number) => {
-  searchForm.value.id = id;
+  growthId.value = id;
+  fetchList();
+});
+
+Bus.on('reset-id', () => {
+  growthId.value = undefined;
   fetchList();
 });
 
@@ -200,6 +205,7 @@ onMounted(() => {
   fetchList();
 });
 
+const growthId = ref<number>();
 const growth_list = ref<GrowthTreeVO>();
 
 const loading = ref<boolean>(false);
@@ -242,7 +248,7 @@ const formRef = ref<FormInstance>();
 const fetchList = async () => {
   loading.value = true;
   try {
-    const { data: res } = await getGrowthItemPage(Object.assign(page.value, searchForm.value));
+    const { data: res } = await getGrowthItemPage(Object.assign(page.value, searchForm.value, { growthId }));
     page.value.total = res.total;
     tableData.value = res.records;
   } finally {
