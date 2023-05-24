@@ -14,10 +14,24 @@ export interface YearVO {
   createTime?: Date;
 }
 
+export interface YearDictVO {
+  oid: number;
+  value: string;
+  display: boolean;
+}
+
+export const getYearList = async (): Promise<ApiResult<YearDictVO[]>> => {
+  return await get('/year/all');
+};
+
 export const getYearPage = async (params: Page): Promise<ApiResult<PageResult<YearVO[]>>> => {
   return await get('/year/list', params);
 };
 
-export const saveYear = async (data: YearVO): Promise<ApiResult<number>> => {
+export const saveOrUpdateYear = async (data: YearVO): Promise<ApiResult<number>> => {
   return await post('/year/save', data);
+};
+
+export const delYear = async (ids: string) => {
+  return await post('/year/del', { ids });
 };

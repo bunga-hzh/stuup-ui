@@ -95,7 +95,7 @@
           v-model="form.yearRange"
           type="daterange"
           format="YYYY-MM-DD"
-          value-format="YYYY-MM-DD"
+          value-format="YYYY-MM-DD HH:mm:ss"
           range-separator="至"
           start-placeholder="开始时间"
           end-placeholder="结束时间" />
@@ -106,7 +106,7 @@
           type="date"
           placeholder="请选择上学期截至时间"
           format="YYYY-MM-DD"
-          value-format="YYYY-MM-DD"
+          value-format="YYYY-MM-DD HH:mm:ss"
           style="width: 100%" />
       </el-form-item>
       <el-form-item label="下学期开始时间" prop="nextSemester">
@@ -115,7 +115,7 @@
           type="date"
           placeholder="请选择下学期开始时间"
           format="YYYY-MM-DD"
-          value-format="YYYY-MM-DD"
+          value-format="YYYY-MM-DD HH:mm:ss"
           style="width: 100%" />
       </el-form-item>
     </el-form>
@@ -135,11 +135,11 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
-import { getYearPage, saveYear, YearVO } from '@/api/basic/year/index';
-import { ElMessage } from 'element-plus';
+import { YearVO, getYearPage, saveOrUpdateYear, delYear } from '@/api/basic/year/index';
+import { ElMessage, ElMessageBox } from 'element-plus';
 
 onMounted(() => {
-  // fetchList();
+  fetchList();
 });
 
 const loading = ref<boolean>(false);
@@ -204,7 +204,22 @@ const updateRow = (row: YearVO) => {
   form.value.nextSemester = row.nextSemester;
 };
 const delRow = (oid: number) => {
-  console.log(oid);
+  ElMessageBox.confirm('确认删除？', '删除学年', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning',
+  })
+    .then(async () => {
+      loading.value = true;
+      try {
+        const res = await delYear(oid.toString());
+        ElMessage.success(res.message);
+        fetchList();
+      } finally {
+        loading.value = false;
+      }
+    })
+    .catch(() => {});
 };
 
 const submitForm = async () => {
@@ -216,7 +231,7 @@ const submitForm = async () => {
   form.value.yearEnd = form.value.yearRange[1];
   try {
     const data = form.value as unknown as YearVO;
-    const res = await saveYear(data);
+    const res = await saveOrUpdateYear(data);
     ElMessage.success(res.message);
     dialog_active.value = false;
     fetchList();

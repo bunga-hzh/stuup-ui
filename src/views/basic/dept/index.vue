@@ -15,8 +15,8 @@
           <el-form ref="searchFormRef" :model="searchForm" label-width="80px">
             <el-row>
               <el-col :sm="24" :md="12" :xl="8">
-                <el-form-item label="部门名称" prop="deptName">
-                  <el-input v-model="searchForm.deptName" placeholder="请输入部门名称" />
+                <el-form-item label="部门名称" prop="key">
+                  <el-input v-model="searchForm.key" placeholder="请输入部门名称" />
                 </el-form-item>
               </el-col>
             </el-row>
@@ -86,8 +86,8 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
-import { getDeptPage, saveDept, DeptVO } from '@/api/basic/dept/index';
-import { ElMessage } from 'element-plus';
+import { DeptVO, getDeptPage, saveOrUpdateDept, delDept } from '@/api/basic/dept/index';
+import { ElMessage, ElMessageBox } from 'element-plus';
 
 onMounted(() => {
   fetchList();
@@ -103,7 +103,7 @@ const page = ref({
   total: 10,
 });
 const searchForm = ref({
-  deptName: '',
+  key: '',
 });
 const form = ref<DeptVO>({
   deptName: '',
@@ -145,7 +145,22 @@ const updateRow = (row: DeptVO) => {
   form.value.deptName = row.deptName;
 };
 const delRow = (oid: number) => {
-  console.log(oid);
+  ElMessageBox.confirm('确认删除？', '删除学年', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning',
+  })
+    .then(async () => {
+      loading.value = true;
+      try {
+        const res = await delDept(oid.toString());
+        ElMessage.success(res.message);
+        fetchList();
+      } finally {
+        loading.value = false;
+      }
+    })
+    .catch(() => {});
 };
 
 const submitForm = async () => {
@@ -155,7 +170,7 @@ const submitForm = async () => {
   loading.value = true;
   try {
     const data = form.value as unknown as DeptVO;
-    const res = await saveDept(data);
+    const res = await saveOrUpdateDept(data);
     ElMessage.success(res.message);
     dialog_active.value = false;
     fetchList();

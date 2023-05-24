@@ -12,10 +12,28 @@ export interface MajorVO {
   createTime?: Date;
 }
 
+export interface MajorDictVO {
+  oid: number;
+  majorCode: string;
+  majorName: string;
+  facultyId: number;
+  facultyName: string;
+  state: number;
+  system: number;
+}
+
+export const getMajorList = async (): Promise<ApiResult<MajorDictVO[]>> => {
+  return await get('/major/all');
+};
+
 export const getMajorPage = async (params: Page): Promise<ApiResult<PageResult<MajorVO[]>>> => {
   return await get('/major/list', params);
 };
 
-export const saveMajor = async (data: MajorVO): Promise<ApiResult<number>> => {
-  return await post('/major/save', data);
+export const saveOrUpdateMajor = async (data: MajorVO): Promise<ApiResult<number>> => {
+  return await post('/major/saveOrUpdate', data);
+};
+
+export const delMajor = async (ids: string) => {
+  return await post('/major/delMultiMajor', { ids });
 };

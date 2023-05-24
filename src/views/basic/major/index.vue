@@ -15,13 +15,8 @@
           <el-form ref="searchFormRef" :model="searchForm" label-width="80px">
             <el-row>
               <el-col :sm="24" :md="12" :xl="8">
-                <el-form-item label="专业编号" prop="majorCode">
-                  <el-input v-model="searchForm.majorCode" placeholder="请输入专业编号" />
-                </el-form-item>
-              </el-col>
-              <el-col :sm="24" :md="12" :xl="8">
-                <el-form-item label="专业名称" prop="majorName">
-                  <el-input v-model="searchForm.majorName" placeholder="请输入专业名称" />
+                <el-form-item label="专业名称" prop="key">
+                  <el-input v-model="searchForm.key" placeholder="请输入专业名称" />
                 </el-form-item>
               </el-col>
             </el-row>
@@ -50,6 +45,7 @@
         <el-table-column prop="majorCode" label="专业编号" show-overflow-tooltip align="center" />
         <el-table-column prop="majorName" label="专业名称" show-overflow-tooltip align="center" />
         <el-table-column prop="facultyName" label="所属系部" show-overflow-tooltip align="center" />
+        <!-- TODO 字典 -->
         <el-table-column prop="system" label="学制" show-overflow-tooltip align="center" />
         <el-table-column prop="state" label="状态" show-overflow-tooltip align="center" />
         <el-table-column label="操作" width="200" align="center">
@@ -81,7 +77,9 @@
         <el-input v-model="form.majorName" placeholder="请输入专业名称" />
       </el-form-item>
       <el-form-item label="所属系部" prop="facultyId">
-        <el-select v-model="form.facultyId" placeholder="请输入所属系部" style="width: 100%" />
+        <el-select v-model="form.facultyId" placeholder="请输入所属系部" style="width: 100%">
+          <el-option v-for="item in faculty_list" :key="item.oid" :label="item.facultyName" :value="item.oid" />
+        </el-select>
       </el-form-item>
       <el-form-item label="专业编号" prop="system">
         <el-input-number
@@ -92,6 +90,7 @@
           :max="5"
           style="width: 100%" />
       </el-form-item>
+      <!-- TODO 字典 -->
       <el-form-item label="专业编号" prop="state">
         <el-radio-group v-model="form.state">
           <el-radio label="1" border>有效</el-radio>
@@ -115,12 +114,17 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
-import { getMajorPage, saveMajor, MajorVO } from '@/api/basic/major/index';
-import { ElMessage } from 'element-plus';
+import { MajorVO, getMajorPage, saveOrUpdateMajor, delMajor } from '@/api/basic/major/index';
+import { FacultyDictVO, getFacultyList } from '@/api/basic/faculty/index';
+import { ElMessage, ElMessageBox } from 'element-plus';
 
 onMounted(() => {
+  initFacultyList();
   fetchList();
 });
+
+// 字典值
+const faculty_list = ref<FacultyDictVO[]>();
 
 const loading = ref<boolean>(false);
 const dialog_active = ref<boolean>(false);
@@ -132,8 +136,7 @@ const page = ref({
   total: 10,
 });
 const searchForm = ref({
-  majorCode: '',
-  majorName: '',
+  key: '',
 });
 const form = ref<MajorVO>({
   majorCode: '',
@@ -151,6 +154,11 @@ const rules = reactive<FormRules>({
 });
 const searchFormRef = ref<FormInstance>();
 const formRef = ref<FormInstance>();
+
+const initFacultyList = async () => {
+  const { data: res } = await getFacultyList();
+  faculty_list.value = res;
+};
 
 const fetchList = async () => {
   loading.value = true;
@@ -187,7 +195,22 @@ const updateRow = (row: MajorVO) => {
   form.value.state = row.state;
 };
 const delRow = (oid: number) => {
-  console.log(oid);
+  ElMessageBox.confirm('确认删除？', '删除学年', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning',
+  })
+    .then(async () => {
+      loading.value = true;
+      try {
+        const res = await delMajor(oid.toString());
+        ElMessage.success(res.message);
+        fetchList();
+      } finally {
+        loading.value = false;
+      }
+    })
+    .catch(() => {});
 };
 
 const submitForm = async () => {
@@ -197,7 +220,7 @@ const submitForm = async () => {
   loading.value = true;
   try {
     const data = form.value as unknown as MajorVO;
-    const res = await saveMajor(data);
+    const res = await saveOrUpdateMajor(data);
     ElMessage.success(res.message);
     dialog_active.value = false;
     fetchList();

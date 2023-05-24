@@ -15,36 +15,19 @@
           <el-form ref="searchFormRef" :model="searchForm" label-width="80px">
             <el-row>
               <el-col :sm="24" :md="12" :xl="8">
-                <el-form-item label="教师工号" prop="jobNo">
-                  <el-input v-model="searchForm.jobNo" placeholder="请输入教师工号" />
-                </el-form-item>
-              </el-col>
-              <el-col :sm="24" :md="12" :xl="8">
-                <el-form-item label="教师姓名" prop="name">
-                  <el-input v-model="searchForm.name" placeholder="请输入教师姓名" />
-                </el-form-item>
-              </el-col>
-              <el-col :sm="24" :md="12" :xl="8">
-                <el-form-item label="性别" prop="sex">
-                  <el-select v-model="searchForm.sex" placeholder="请选择性别" style="width: 100%"></el-select>
+                <el-form-item label="教师姓名" prop="key">
+                  <el-input v-model="searchForm.key" placeholder="请输入教师姓名" />
                 </el-form-item>
               </el-col>
               <el-col :sm="24" :md="12" :xl="8">
                 <el-form-item label="所属系部" prop="facultyId">
-                  <el-select
-                    v-model="searchForm.facultyId"
-                    placeholder="请选择所属系部"
-                    style="width: 100%"></el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :sm="24" :md="12" :xl="8">
-                <el-form-item label="教研组" prop="teachGroup">
-                  <el-select v-model="searchForm.teachGroup" placeholder="请选择教研组" style="width: 100%"></el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :sm="24" :md="12" :xl="8">
-                <el-form-item label="状态" prop="state">
-                  <el-select v-model="searchForm.state" placeholder="请选择状态" style="width: 100%"></el-select>
+                  <el-select v-model="searchForm.facultyId" placeholder="请选择所属系部" style="width: 100%">
+                    <el-option
+                      v-for="item in faculty_list"
+                      :key="item.oid"
+                      :label="item.facultyName"
+                      :value="item.oid" />
+                  </el-select>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -56,10 +39,10 @@
       <template #header>
         <div class="card-header">
           <el-space>
-            <el-button type="primary" @click="addRow">
+            <!-- <el-button type="primary" @click="addRow">
               <el-icon><Plus /></el-icon>
               添加
-            </el-button>
+            </el-button> -->
           </el-space>
           <el-space>
             <el-button :disabled="loading" circle @click="fetchList">
@@ -72,19 +55,21 @@
       <el-table :data="tableData" border stripe v-loading="loading" empty-text="空空如也~~" style="width: 100%">
         <el-table-column prop="jobNo" label="教师工号" show-overflow-tooltip align="center" />
         <el-table-column prop="name" label="教师姓名" show-overflow-tooltip align="center" />
+        <!-- TODO 字典 -->
         <el-table-column prop="sex" label="性别" show-overflow-tooltip align="center" />
         <el-table-column prop="facultyName" label="所属系部" show-overflow-tooltip align="center" />
         <el-table-column prop="teachGroupName" label="教研组" show-overflow-tooltip align="center" />
         <el-table-column prop="phone" label="联系方式" show-overflow-tooltip align="center" />
         <el-table-column prop="idCard" label="身份证号" show-overflow-tooltip align="center" />
         <el-table-column prop="address" label="地址" show-overflow-tooltip align="center" />
+        <!-- TODO 字典 -->
         <el-table-column prop="state" label="状态" show-overflow-tooltip align="center" />
-        <el-table-column label="操作" width="200" align="center">
+        <!-- <el-table-column label="操作" width="200" align="center">
           <template #default="{ row }">
             <el-button @click="updateRow(row)">修改</el-button>
             <el-button @click="delRow(row.oid)" type="danger">删除</el-button>
           </template>
-        </el-table-column>
+        </el-table-column> -->
       </el-table>
       <div class="page-box">
         <el-pagination
@@ -152,11 +137,16 @@
 import { ref, onMounted, reactive } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
 import { getTeacherPage, saveTeacher, TeacherVO } from '@/api/basic/teacher/index';
+import { FacultyDictVO, getFacultyList } from '@/api/basic/faculty/index';
 import { ElMessage } from 'element-plus';
 
 onMounted(() => {
+  fetchFacultyList();
   fetchList();
 });
+
+// 字典值
+const faculty_list = ref<FacultyDictVO[]>();
 
 const loading = ref<boolean>(false);
 const dialog_active = ref<boolean>(false);
@@ -168,12 +158,8 @@ const page = ref({
   total: 10,
 });
 const searchForm = ref({
-  jobNo: '',
-  name: '',
-  sex: '',
+  key: '',
   facultyId: '',
-  teachGroup: '',
-  state: '',
 });
 const form = ref<TeacherVO>({
   jobNo: '',
@@ -199,6 +185,11 @@ const rules = reactive<FormRules>({
 });
 const searchFormRef = ref<FormInstance>();
 const formRef = ref<FormInstance>();
+
+const fetchFacultyList = async () => {
+  const { data: res } = await getFacultyList();
+  faculty_list.value = res;
+};
 
 const fetchList = async () => {
   loading.value = true;

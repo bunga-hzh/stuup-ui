@@ -12,46 +12,25 @@
       </template>
       <el-row>
         <el-col :span="24">
-          <el-form ref="searchFormRef" :model="searchForm" label-width="80px">
+          <el-form ref="searchFormRef" :model="searchForm" label-width="140px">
             <el-row>
               <el-col :sm="24" :md="12" :xl="8">
-                <el-form-item label="学号" prop="studentNo">
-                  <el-input v-model="searchForm.studentNo" placeholder="请输入学号" />
-                </el-form-item>
-              </el-col>
-              <el-col :sm="24" :md="12" :xl="8">
-                <el-form-item label="学生姓名" prop="name">
-                  <el-input v-model="searchForm.name" placeholder="请输入学生姓名" />
-                </el-form-item>
-              </el-col>
-              <el-col :sm="24" :md="12" :xl="8">
-                <el-form-item label="性别" prop="sex">
-                  <el-select v-model="searchForm.sex" placeholder="请输入性别" style="width: 100%"></el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :sm="24" :md="12" :xl="8">
-                <el-form-item label="所属班级" prop="classId">
-                  <el-select v-model="searchForm.classId" placeholder="请选择所属班级" style="width: 100%"></el-select>
+                <el-form-item label="学生姓名/班级名称" prop="key">
+                  <el-input v-model="searchForm.key" placeholder="请输入学生姓名/班级名称" />
                 </el-form-item>
               </el-col>
               <el-col :sm="24" :md="12" :xl="8">
                 <el-form-item label="所属年级" prop="gradeId">
-                  <el-select v-model="searchForm.gradeId" placeholder="请选择所属年级" style="width: 100%"></el-select>
+                  <el-select v-model="searchForm.gradeId" placeholder="请选择所属年级" style="width: 100%">
+                    <el-option v-for="item in grade_list" :key="item.oid" :label="item.gradeName" :value="item.oid" />
+                  </el-select>
                 </el-form-item>
               </el-col>
               <el-col :sm="24" :md="12" :xl="8">
                 <el-form-item label="所属专业" prop="majorId">
-                  <el-select v-model="searchForm.majorId" placeholder="请选择所属专业" style="width: 100%"></el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :sm="24" :md="12" :xl="8">
-                <el-form-item label="民族" prop="nation">
-                  <el-select v-model="searchForm.nation" placeholder="请选择民族" style="width: 100%"></el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :sm="24" :md="12" :xl="8">
-                <el-form-item label="学业状态" prop="statue">
-                  <el-select v-model="searchForm.statue" placeholder="请选择学业状态" style="width: 100%"></el-select>
+                  <el-select v-model="searchForm.majorId" placeholder="请选择所属专业" style="width: 100%">
+                    <el-option v-for="item in major_list" :key="item.oid" :label="item.majorName" :value="item.oid" />
+                  </el-select>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -87,12 +66,12 @@
         <el-table-column prop="nation" label="民族" show-overflow-tooltip align="center" />
         <el-table-column prop="phone" label="联系方式" show-overflow-tooltip align="center" />
         <el-table-column prop="status" label="学业状态" show-overflow-tooltip align="center" />
-        <el-table-column label="操作" width="200" align="center">
+        <!-- <el-table-column label="操作" width="200" align="center">
           <template #default="{ row }">
             <el-button @click="updateRow(row)">修改</el-button>
             <el-button @click="delRow(row.oid)" type="danger">删除</el-button>
           </template>
-        </el-table-column>
+        </el-table-column> -->
       </el-table>
       <div class="page-box">
         <el-pagination
@@ -157,11 +136,19 @@
 import { ref, onMounted, reactive } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
 import { getStudentPage, saveStudent, StudentVO } from '@/api/basic/student/index';
+import { GradeDictVO, getGraderList } from '@/api/basic/grade/index';
+import { MajorDictVO, getMajorList } from '@/api/basic/major/index';
 import { ElMessage } from 'element-plus';
 
 onMounted(() => {
+  initGradeList();
+  initMajorList();
   fetchList();
 });
+
+// 字典
+const grade_list = ref<GradeDictVO[]>();
+const major_list = ref<MajorDictVO[]>();
 
 const loading = ref<boolean>(false);
 const dialog_active = ref<boolean>(false);
@@ -173,14 +160,9 @@ const page = ref({
   total: 10,
 });
 const searchForm = ref({
-  studentNo: '',
-  name: '',
-  sex: undefined,
-  classId: undefined,
+  key: '',
   gradeId: undefined,
   majorId: undefined,
-  nation: undefined,
-  statue: undefined,
 });
 const form = ref<StudentVO>({
   oid: undefined,
@@ -209,6 +191,15 @@ const rules = reactive<FormRules>({
 });
 const searchFormRef = ref<FormInstance>();
 const formRef = ref<FormInstance>();
+
+const initGradeList = async () => {
+  const { data: res } = await getGraderList();
+  grade_list.value = res;
+};
+const initMajorList = async () => {
+  const { data: res } = await getMajorList();
+  major_list.value = res;
+};
 
 const fetchList = async () => {
   loading.value = true;

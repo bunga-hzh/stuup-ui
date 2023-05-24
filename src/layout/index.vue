@@ -33,7 +33,7 @@
       </el-aside>
       <el-container>
         <el-main><RouterView /></el-main>
-        <el-footer>Footer</el-footer>
+        <el-footer>&copy;版权所有 泼猴信息技术（上海）有限公司</el-footer>
       </el-container>
     </el-container>
   </el-container>
@@ -112,7 +112,8 @@ const isFold = ref<boolean>(false);
 
   .el-footer {
     border-top: 1px solid #eee;
-    line-height: 60px;
+    height: var(--footer-height);
+    line-height: var(--footer-height);
   }
 }
 </style>

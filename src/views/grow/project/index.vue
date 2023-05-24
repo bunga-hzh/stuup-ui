@@ -1,15 +1,17 @@
 <template>
-  <Row :gap="[10, 10]" style="margin: 10px">
-    <Column :md="24" :lg="6">
-      <LeftTree />
-    </Column>
-    <Column :md="24" :lg="18">
-      <RightTable />
-    </Column>
-  </Row>
+  <el-row :gutter="10" style="margin: 20px">
+    <el-col :sm="24" :xl="8">
+      <GrowthTree />
+    </el-col>
+    <el-col :sm="24" :xl="16">
+      <GrowthItem />
+    </el-col>
+  </el-row>
 </template>
 
 <script setup lang="ts">
-import LeftTree from './components/LeftTree.vue';
-import RightTable from './components/RightTable.vue';
+import GrowthTree from './GrowthTree.vue';
+import GrowthItem from './GrowthItem.vue';
 </script>
+
+<style scoped lang="scss"></style>

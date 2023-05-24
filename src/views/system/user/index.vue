@@ -1,6 +1,6 @@
 <template>
   <div style="padding: 10px 20px">
-    <el-card style="margin: 10px 0">
+    <!-- <el-card style="margin: 10px 0">
       <template #header>
         <div class="card-header">
           <span>用户管理</span>
@@ -51,7 +51,7 @@
           </el-form>
         </el-col>
       </el-row>
-    </el-card>
+    </el-card> -->
     <el-card>
       <template #header>
         <div class="card-header">
@@ -109,23 +109,38 @@
       <el-form-item label="用户名" prop="userName">
         <el-input v-model="form.userName" placeholder="请输入用户名" />
       </el-form-item>
+      <!-- TODO 字典 -->
       <el-form-item label="性别" prop="sex">
-        <el-select v-model="form.sex" placeholder="请输入性别" style="width: 100%"></el-select>
+        <el-radio-group v-model="form.sex">
+          <el-radio label="1" border>男</el-radio>
+          <el-radio label="2" border>女</el-radio>
+        </el-radio-group>
       </el-form-item>
       <el-form-item label="手机号" prop="mobile">
         <el-input v-model="form.mobile" placeholder="请输入手机号" />
       </el-form-item>
       <el-form-item label="文化程度" prop="degree">
-        <el-select v-model="form.degree" placeholder="请选择文化程度" style="width: 100%"></el-select>
+        <el-input v-model="form.degree" placeholder="请选择文化程度" />
       </el-form-item>
+      <!-- TODO 字典 -->
       <el-form-item label="教师类型" prop="teacherType">
-        <el-select v-model="form.teacherType" placeholder="请选择教师类型" style="width: 100%"></el-select>
+        <el-select v-model="form.teacherType" placeholder="请选择教师类型" style="width: 100%">
+          <el-option label="在职在编" value="1" />
+          <el-option label="编外运行" value="2" />
+          <el-option label="行政外编" value="3" />
+        </el-select>
       </el-form-item>
+      <!-- TODO 字典 -->
       <el-form-item label="用户类型" prop="userType">
-        <el-select v-model="form.userType" placeholder="请选择用户类型" style="width: 100%"></el-select>
+        <el-select v-model="form.userType" placeholder="请选择用户类型" style="width: 100%">
+          <el-option label="学生" value="1" />
+          <el-option label="教师" value="2" />
+        </el-select>
       </el-form-item>
       <el-form-item label="所属部门" prop="deptId">
-        <el-select v-model="form.deptId" placeholder="请选择所属部门" style="width: 100%"></el-select>
+        <el-select v-model="form.deptId" placeholder="请选择所属部门" style="width: 100%">
+          <el-option v-for="item in dept_list" :key="item.oid" :label="item.value" :value="item.oid" />
+        </el-select>
       </el-form-item>
       <el-form-item label="身份证号" prop="idCard">
         <el-input v-model="form.idCard" placeholder="请输入身份证号" />
@@ -133,8 +148,17 @@
       <el-form-item label="出生年月" prop="birthday">
         <el-date-picker v-model="form.birthday" type="date" placeholder="请选择出生年月" style="width: 100%" />
       </el-form-item>
+      <el-form-item label="用户角色" prop="roles">
+        <el-select v-model="form.roles" placeholder="请选择用户角色" multiple style="width: 100%">
+          <el-option v-for="item in role_list" :label="item.value" :value="item.oid" />
+        </el-select>
+      </el-form-item>
+      <!-- TODO 字典 -->
       <el-form-item label="状态" prop="state">
-        <el-select v-model="form.state" placeholder="请选择状态" style="width: 100%"></el-select>
+        <el-select v-model="form.state" placeholder="请选择状态" style="width: 100%">
+          <el-option label="正常" value="1" />
+          <el-option label="禁用" value="2" />
+        </el-select>
       </el-form-item>
     </el-form>
     <template #footer>
@@ -153,12 +177,20 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
-import { getUserPage, saveUser, UserVO } from '@/api/system/user/index';
-import { ElMessage } from 'element-plus';
+import { UserVO, getUserPage, saveOrUpdateUser, delUser } from '@/api/system/user/index';
+import { DeptDictVO, getDeptList } from '@/api/basic/dept';
+import { RoleDictVO, getRoleList } from '@/api/system/role/index';
+import { ElMessage, ElMessageBox } from 'element-plus';
 
 onMounted(() => {
+  initDeptList();
+  initRoleList();
   fetchList();
 });
+
+//字典
+const dept_list = ref<DeptDictVO[]>();
+const role_list = ref<RoleDictVO[]>();
 
 const loading = ref<boolean>(false);
 const dialog_active = ref<boolean>(false);
@@ -183,28 +215,32 @@ const form = ref<UserVO>({
   userName: '',
   sex: undefined,
   mobile: '',
-  degree: undefined,
+  degree: '',
   teacherType: undefined,
   userType: undefined,
   deptId: undefined,
   idCard: '',
   birthday: undefined,
+  roles: [],
   state: undefined,
 });
 const rules = reactive<FormRules>({
   loginName: [{ required: true, message: '请输入用户账号', trigger: 'blur' }],
   userName: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
-  sex: [{ required: true, message: '请输入性别', trigger: 'blur' }],
-  mobile: [{ required: true, message: '请输入手机号', trigger: 'blur' }],
-  degree: [{ required: true, message: '请选择文化程度', trigger: 'blur' }],
-  userType: [{ required: true, message: '请选择用户类型', trigger: 'blur' }],
-  deptId: [{ required: true, message: '请选择所属部门', trigger: 'blur' }],
-  idCard: [{ required: true, message: '请输入身份证号', trigger: 'blur' }],
-  birthday: [{ required: true, message: '请选择出生年月', trigger: 'blur' }],
-  state: [{ required: true, message: '请选择状态', trigger: 'blur' }],
+  roles: [{ required: true, message: '请选择用户角色', trigger: 'blur' }],
 });
 const searchFormRef = ref<FormInstance>();
 const formRef = ref<FormInstance>();
+
+const initDeptList = async () => {
+  const { data: res } = await getDeptList();
+  dept_list.value = res;
+};
+
+const initRoleList = async () => {
+  const { data: res } = await getRoleList();
+  role_list.value = res;
+};
 
 const fetchList = async () => {
   loading.value = true;
@@ -244,10 +280,26 @@ const updateRow = (row: UserVO) => {
   form.value.deptId = row.deptId;
   form.value.idCard = row.idCard;
   form.value.birthday = row.birthday;
+  form.value.roles = row.roles;
   form.value.state = row.state;
 };
 const delRow = (oid: number) => {
-  console.log(oid);
+  ElMessageBox.confirm('确认删除？', '删除学年', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning',
+  })
+    .then(async () => {
+      loading.value = true;
+      try {
+        const res = await delUser(oid.toString());
+        ElMessage.success(res.message);
+        fetchList();
+      } finally {
+        loading.value = false;
+      }
+    })
+    .catch(() => {});
 };
 
 const submitForm = async () => {
@@ -257,7 +309,7 @@ const submitForm = async () => {
   loading.value = true;
   try {
     const data = form.value as unknown as UserVO;
-    const res = await saveUser(data);
+    const res = await saveOrUpdateUser(data);
     ElMessage.success(res.message);
     dialog_active.value = false;
     fetchList();
@@ -273,12 +325,13 @@ const resetForm = () => {
     userName: '',
     sex: undefined,
     mobile: '',
-    degree: undefined,
+    degree: '',
     teacherType: undefined,
     userType: undefined,
     deptId: undefined,
     idCard: '',
     birthday: undefined,
+    roles: [],
     state: undefined,
   };
   formRef.value?.resetFields();

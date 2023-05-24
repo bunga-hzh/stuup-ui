@@ -12,39 +12,29 @@
       </template>
       <el-row>
         <el-col :span="24">
-          <el-form ref="searchFormRef" :model="searchForm" label-width="80px">
+          <el-form ref="searchFormRef" :model="searchForm" label-width="120px">
             <el-row>
               <el-col :sm="24" :md="12" :xl="8">
-                <el-form-item label="班号" prop="code">
-                  <el-input v-model="searchForm.code" placeholder="请输入班号" />
-                </el-form-item>
-              </el-col>
-              <el-col :sm="24" :md="12" :xl="8">
-                <el-form-item label="班级名称" prop="name">
-                  <el-input v-model="searchForm.name" placeholder="请输入班级名称" />
+                <el-form-item label="班级名称/班号" prop="key">
+                  <el-input v-model="searchForm.key" placeholder="请输入班级名称/班号" />
                 </el-form-item>
               </el-col>
               <el-col :sm="24" :md="12" :xl="8">
                 <el-form-item label="所属系部" prop="facultyId">
-                  <el-select
-                    v-model="searchForm.facultyId"
-                    placeholder="请选择所属系部"
-                    style="width: 100%"></el-select>
+                  <el-select v-model="searchForm.facultyId" placeholder="请选择所属系部" style="width: 100%">
+                    <el-option
+                      v-for="item in faculty_list"
+                      :key="item.oid"
+                      :label="item.facultyName"
+                      :value="item.oid" />
+                  </el-select>
                 </el-form-item>
               </el-col>
               <el-col :sm="24" :md="12" :xl="8">
                 <el-form-item label="所属年级" prop="gradeId">
-                  <el-select v-model="searchForm.gradeId" placeholder="请选择所属年级" style="width: 100%"></el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :sm="24" :md="12" :xl="8">
-                <el-form-item label="所属专业" prop="majorId">
-                  <el-select v-model="searchForm.majorId" placeholder="请选择所属专业" style="width: 100%"></el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :sm="24" :md="12" :xl="8">
-                <el-form-item label="班主任" prop="teacherId">
-                  <el-select v-model="searchForm.teacherId" placeholder="请选择班主任" style="width: 100%"></el-select>
+                  <el-select v-model="searchForm.gradeId" placeholder="请选择所属年级" style="width: 100%">
+                    <el-option v-for="item in grade_list" :key="item.oid" :label="item.gradeName" :value="item.oid" />
+                  </el-select>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -76,12 +66,11 @@
         <el-table-column prop="gradeName" label="所属年级" show-overflow-tooltip align="center" />
         <el-table-column prop="majorName" label="所属专业" show-overflow-tooltip align="center" />
         <el-table-column prop="teacherName" label="班主任" show-overflow-tooltip align="center" />
-        <el-table-column prop="adminName" label="管理员" show-overflow-tooltip align="center" />
         <el-table-column prop="count" label="人数" show-overflow-tooltip align="center" />
         <el-table-column label="操作" width="200" align="center">
           <template #default="{ row }">
             <el-button @click="updateRow(row)">修改</el-button>
-            <el-button @click="delRow(row.oid)" type="danger">删除</el-button>
+            <el-button @click="delRow(row.id)" type="danger">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -107,22 +96,37 @@
         <el-input v-model="form.name" placeholder="请输入班级名称" />
       </el-form-item>
       <el-form-item label="所属系部" prop="facultyId">
-        <el-select v-model="form.facultyId" placeholder="请选择所属系部"></el-select>
+        <el-select v-model="form.facultyId" placeholder="请选择所属系部" style="width: 100%">
+          <el-option v-for="item in faculty_list" :key="item.oid" :label="item.facultyName" :value="item.oid" />
+        </el-select>
       </el-form-item>
       <el-form-item label="所属年级" prop="gradeId">
-        <el-select v-model="form.gradeId" placeholder="请选择所属年级"></el-select>
+        <el-select v-model="form.gradeId" placeholder="请选择所属年级" style="width: 100%">
+          <el-option v-for="item in grade_list" :key="item.oid" :label="item.gradeName" :value="item.oid" />
+        </el-select>
       </el-form-item>
       <el-form-item label="所属专业" prop="majorId">
-        <el-select v-model="form.majorId" placeholder="请选择所属专业"></el-select>
+        <el-select v-model="form.majorId" placeholder="请选择所属专业" style="width: 100%">
+          <el-option v-for="item in major_list" :key="item.oid" :label="item.majorName" :value="item.oid" />
+        </el-select>
       </el-form-item>
       <el-form-item label="班主任" prop="teacherId">
-        <el-select v-model="form.teacherId" placeholder="请选择班主任"></el-select>
+        <el-select v-model="form.teacherId" placeholder="请选择班主任" style="width: 100%">
+          <el-option v-for="item in user_list" :key="item.oid" :label="item.value" :value="item.oid" />
+        </el-select>
       </el-form-item>
       <el-form-item label="管理员" prop="adminId">
-        <el-select v-model="form.adminId" placeholder="请选择管理员"></el-select>
+        <el-select v-model="form.adminId" placeholder="请选择管理员" style="width: 100%">
+          <el-option v-for="item in user_list" :key="item.oid" :label="item.value" :value="item.oid" />
+        </el-select>
       </el-form-item>
       <el-form-item label="人数" prop="count">
-        <el-input-number v-model="form.count" :min="0" controls-position="right" placeholder="请选择人数" />
+        <el-input-number
+          v-model="form.count"
+          :min="0"
+          controls-position="right"
+          placeholder="请选择人数"
+          style="width: 100%" />
       </el-form-item>
     </el-form>
     <template #footer>
@@ -141,12 +145,26 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
-import { getClassPage, saveClass, ClassVO } from '@/api/basic/class/index';
-import { ElMessage } from 'element-plus';
+import { ClassVO, getClassPage, saveOrUpdateClass, delClass } from '@/api/basic/class/index';
+import { FacultyDictVO, getFacultyList } from '@/api/basic/faculty/index';
+import { GradeDictVO, getGraderList } from '@/api/basic/grade/index';
+import { MajorDictVO, getMajorList } from '@/api/basic/major/index';
+import { UserDictVO, getUserList } from '@/api/system/user';
+import { ElMessage, ElMessageBox } from 'element-plus';
 
 onMounted(() => {
+  initFacultyList();
+  initGradeList();
+  initMajorList();
+  initUser();
   fetchList();
 });
+
+// 字典
+const faculty_list = ref<FacultyDictVO[]>();
+const grade_list = ref<GradeDictVO[]>();
+const major_list = ref<MajorDictVO[]>();
+const user_list = ref<UserDictVO[]>();
 
 const loading = ref<boolean>(false);
 const dialog_active = ref<boolean>(false);
@@ -158,14 +176,12 @@ const page = ref({
   total: 10,
 });
 const searchForm = ref({
-  code: '',
-  name: '',
+  key: '',
   facultyId: undefined,
   gradeId: undefined,
-  majorId: undefined,
-  teacherId: undefined,
 });
 const form = ref<ClassVO>({
+  id: undefined,
   code: '',
   name: '',
   facultyId: undefined,
@@ -187,6 +203,23 @@ const rules = reactive<FormRules>({
 });
 const searchFormRef = ref<FormInstance>();
 const formRef = ref<FormInstance>();
+
+const initFacultyList = async () => {
+  const { data: res } = await getFacultyList();
+  faculty_list.value = res;
+};
+const initGradeList = async () => {
+  const { data: res } = await getGraderList();
+  grade_list.value = res;
+};
+const initMajorList = async () => {
+  const { data: res } = await getMajorList();
+  major_list.value = res;
+};
+const initUser = async () => {
+  const { data: res } = await getUserList();
+  user_list.value = res;
+};
 
 const fetchList = async () => {
   loading.value = true;
@@ -215,7 +248,7 @@ const addRow = () => {
 const updateRow = (row: ClassVO) => {
   dialog_title.value = '修改';
   dialog_active.value = true;
-  form.value.oid = row.oid;
+  form.value.id = row.id;
   form.value.code = row.code;
   form.value.name = row.name;
   form.value.facultyId = row.facultyId;
@@ -225,8 +258,23 @@ const updateRow = (row: ClassVO) => {
   form.value.adminId = row.adminId;
   form.value.count = row.count;
 };
-const delRow = (oid: number) => {
-  console.log(oid);
+const delRow = (id: number) => {
+  ElMessageBox.confirm('确认删除？', '删除学年', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning',
+  })
+    .then(async () => {
+      loading.value = true;
+      try {
+        const res = await delClass(id.toString());
+        ElMessage.success(res.message);
+        fetchList();
+      } finally {
+        loading.value = false;
+      }
+    })
+    .catch(() => {});
 };
 
 const submitForm = async () => {
@@ -236,7 +284,7 @@ const submitForm = async () => {
   loading.value = true;
   try {
     const data = form.value as unknown as ClassVO;
-    const res = await saveClass(data);
+    const res = await saveOrUpdateClass(data);
     ElMessage.success(res.message);
     dialog_active.value = false;
     fetchList();

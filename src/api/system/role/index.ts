@@ -14,6 +14,15 @@ export interface RoleMenuVO {
   menuIds: number[];
 }
 
+export interface RoleDictVO {
+  oid: number;
+  value: string;
+  disabled: boolean;
+}
+
+export const getRoleList = async (): Promise<ApiResult<RoleDictVO[]>> => {
+  return await get('/role/all');
+};
 export const getRolePage = async (params: Page): Promise<ApiResult<PageResult<RoleVO[]>>> => {
   return await get('/role/list', params);
 };

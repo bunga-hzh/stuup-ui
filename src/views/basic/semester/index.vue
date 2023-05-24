@@ -128,7 +128,7 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
-import { getYearPage, saveYear, YearVO } from '@/api/basic/year/index';
+import { getYearPage, saveOrUpdateYear, YearVO } from '@/api/basic/year/index';
 import { ElMessage } from 'element-plus';
 
 onMounted(() => {
@@ -208,7 +208,7 @@ const submitForm = async () => {
   form.value.yearEnd = form.value.yearRange[1];
   try {
     const data = form.value as unknown as YearVO;
-    const res = await saveYear(data);
+    const res = await saveOrUpdateYear(data);
     ElMessage.success(res.message);
     dialog_active.value = false;
     fetchList();

@@ -26,7 +26,7 @@
       default-expand-all
       :data="treeData"
       :props="props"
-      :default-checked-keys="checkdKeys" />
+      :default-checked-keys="checkKeys" />
   </el-drawer>
 </template>
 
@@ -46,7 +46,7 @@ const isSelectAll = ref<boolean>(false);
 const isExpandAll = ref<boolean>(true);
 const roleId = ref<number>();
 const treeData = ref<Tree[]>([]);
-const checkdKeys = ref<number[]>();
+const checkKeys = ref<number[]>();
 const loading = ref<boolean>(false);
 const treeRef = ref();
 
@@ -59,7 +59,6 @@ const handleIsSelectAll = () => {
 };
 
 const handleIsExpandAll = () => {
-  console.log(treeRef.value?.store);
   const nodes = treeRef.value?.store.nodesMap;
   for (let node in nodes) {
     if (nodes[node].expanded === isExpandAll.value) {
@@ -73,7 +72,7 @@ const open = async (id: number) => {
   roleId.value = id;
   try {
     const { data: res } = await getRoleMenu(id);
-    checkdKeys.value = res;
+    checkKeys.value = res;
     active.value = true;
   } catch {}
 };
@@ -103,7 +102,9 @@ const handleClose = () => {
   roleId.value = undefined;
   isSelectAll.value = false;
   isExpandAll.value = true;
-  checkdKeys.value = [];
+  checkKeys.value = [];
+  handleIsSelectAll();
+  handleIsExpandAll();
   loading.value = false;
 };
 

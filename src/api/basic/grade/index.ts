@@ -7,10 +7,24 @@ export interface GradeVO {
   year: string;
 }
 
+export interface GradeDictVO {
+  oid: number;
+  gradeName: string;
+  year: string;
+}
+
+export const getGraderList = async (): Promise<ApiResult<GradeDictVO[]>> => {
+  return await get('/grade/all');
+};
+
 export const getGraderPage = async (params: Page): Promise<ApiResult<PageResult<GradeVO[]>>> => {
   return await get('/grade/list', params);
 };
 
-export const saveGrade = async (data: GradeVO): Promise<ApiResult<number>> => {
-  return await post('/grade/save', data);
+export const saveOrUpdateGrade = async (data: GradeVO): Promise<ApiResult<number>> => {
+  return await post('/grade/saveOrUpdate', data);
+};
+
+export const delGrade = async (ids: string) => {
+  return await post('/grade/delMultiGrade', { ids });
 };

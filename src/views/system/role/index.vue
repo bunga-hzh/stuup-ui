@@ -91,7 +91,7 @@
         </el-button>
       </template>
     </el-dialog>
-    <RoleMenuTree ref="menuTreeRef" />
+    <MenuTree ref="menuTreeRef" />
   </div>
 </template>
 
@@ -100,7 +100,7 @@ import { ref, onMounted, reactive } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
 import { getRolePage, saveRole, delRole, RoleVO } from '@/api/system/role/index';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import RoleMenuTree from './components/RoleMenuTree.vue';
+import MenuTree from './MenuTree.vue';
 
 onMounted(() => {
   fetchList();
@@ -197,7 +197,7 @@ const submitForm = async () => {
 };
 
 const openRoleMenuTree = async (roleId: number) => {
-  menuTreeRef.value.open(roleId);
+  menuTreeRef.value?.open(roleId);
 };
 
 const resetForm = () => {

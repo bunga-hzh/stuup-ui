@@ -2,7 +2,7 @@ import { ApiResult, get, post } from '@/api/api';
 import { Page, PageResult } from '@/types/global';
 
 export interface ClassVO {
-  oid?: number;
+  id?: number;
   code: string;
   name: string;
   facultyId: number | undefined;
@@ -18,6 +18,10 @@ export const getClassPage = async (params: Page): Promise<ApiResult<PageResult<C
   return await get('/class/list', params);
 };
 
-export const saveClass = async (data: ClassVO): Promise<ApiResult<number>> => {
-  return await post('/class/save', data);
+export const saveOrUpdateClass = async (data: ClassVO): Promise<ApiResult<number>> => {
+  return await post('/class/saveOrUpdate', data);
+};
+
+export const delClass = async (ids: string) => {
+  return await post('/class/delMultiClass', { ids });
 };
