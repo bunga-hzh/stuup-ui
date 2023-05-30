@@ -14,6 +14,10 @@ export interface ClassVO {
   createTime?: Date;
 }
 
+export const getClassList = async (): Promise<ApiResult<ClassVO[]>> => {
+  return await get('/class/all');
+};
+
 export const getClassPage = async (params: Page): Promise<ApiResult<PageResult<ClassVO[]>>> => {
   return await get('/class/list', params);
 };

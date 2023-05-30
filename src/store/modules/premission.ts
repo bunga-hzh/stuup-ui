@@ -2,10 +2,9 @@ import { defineStore } from 'pinia';
 import { store } from '../index';
 import { storeNames } from '../store-name';
 import router from '@/router';
-import localRouter from '@/router/localRouter';
+import asyncRouters from '@/router/asyncRouters';
 import type { RouteRecordRaw } from 'vue-router';
 const compModels = import.meta.glob('../../views/**/index.vue');
-import { cloneDeep } from 'lodash';
 import Layout from '@/layout/index.vue';
 import type { MenuVO } from '@/api/system/menu/index';
 
@@ -59,19 +58,15 @@ export const usePermissionStore = defineStore(storeNames.PERMISSION, {
      */
     async generateRoutes(menus: MenuVO[]) {
       const dynamicRouter = formatRouter(menus);
-      setAsideMenu(cloneDeep(dynamicRouter), cloneDeep(localRouter), (frontMenu: MenuVO[], backMenu: MenuVO[]) => {
-        this.setFrontAsideRouters(frontMenu);
-        this.setBackAsideRouters(backMenu);
-      });
-      const rootRouter = {
-        path: '/',
-        component: Layout,
-        children: dynamicRouter,
-      } as RouteRecordRaw;
-
-      const rewriteRoutes = [rootRouter, ...localRouter, { path: '/:path(.*)*', redirect: '/404' }];
+      const rewriteRoutes = [...asyncRouters, ...dynamicRouter, { path: '/:path(.*)*', redirect: '/404' }];
       this.setRouters(rewriteRoutes);
       rewriteRoutes.forEach(route => router.addRoute(route));
+      const frontMenus = formatAsideMenu(rewriteRoutes, 1);
+      this.setFrontAsideRouters(frontMenus);
+      const backMenus = formatAsideMenu(rewriteRoutes, 2);
+      this.setBackAsideRouters(backMenus);
+      console.log(frontMenus, backMenus);
+
       console.log(router.getRoutes());
     },
   },
@@ -109,12 +104,12 @@ const formatRouter = (menus: MenuVO[]): RouteRecordRaw[] => {
 
   const findRedirect = (menu: MenuVO): string => {
     if (menu.children && menu.children.length) {
-      return menu.children[0].path;
+      return menu.path + menu.children[0].path;
     }
     return menu.redirect || '';
   };
 
-  const fintComp = (menu: MenuVO, path: string = ''): any => {
+  const findComp = (menu: MenuVO, path: string = ''): any => {
     if (!menu.children) {
       const compPath = `../../views${path}/index.vue`;
       return compModels[compPath];
@@ -122,27 +117,62 @@ const formatRouter = (menus: MenuVO[]): RouteRecordRaw[] => {
     return undefined;
   };
 
+  const onlyFirstLevelMenu = (menu: MenuVO): boolean => {
+    return (menu.pid === 0 && !menu.children) || menu.children?.length === 0;
+  };
+
+  const isFirstLevelMenu = (menu: MenuVO): boolean => {
+    return menu.pid === 0 && menu.children && menu.children.length > 0;
+  };
+
   const format = (menus: MenuVO[]): RouteRecordRaw[] => {
     return menus.map(menu => {
       const path = findPath(menu);
       const name = path.split('/').filter(Boolean).join('-') || 'index';
-      const compPath = fintComp(menu, path);
+      const compPath = findComp(menu, path);
       let children: RouteRecordRaw[] = [];
       if (menu.children && menu.children.length) {
         children = format(menu.children);
       }
-      return {
-        path,
-        name,
-        component: compPath,
-        redirect: findRedirect(menu),
-        children: children,
-        meta: {
-          title: menu.name,
-          flag: menu.flag,
-          hidden: menu.hidden,
-        },
+      const meta = {
+        title: menu.name,
+        flag: menu.flag,
+        hidden: menu.hidden,
       };
+      if (onlyFirstLevelMenu(menu)) {
+        return {
+          path,
+          name: `${name}Parent`,
+          component: Layout,
+          meta: {},
+          children: [
+            {
+              path: '',
+              name,
+              component: compPath,
+              meta,
+            },
+          ],
+        };
+      } else if (isFirstLevelMenu(menu)) {
+        return {
+          path,
+          name,
+          component: Layout,
+          redirect: findRedirect(menu),
+          children: children,
+          meta,
+        };
+      } else {
+        return {
+          path,
+          name,
+          component: compPath,
+          redirect: findRedirect(menu),
+          children: children,
+          meta,
+        };
+      }
     });
   };
 
@@ -151,47 +181,47 @@ const formatRouter = (menus: MenuVO[]): RouteRecordRaw[] => {
   return router;
 };
 
-const setAsideMenu = (dynamicRouter: RouteRecordRaw[], localRouter: RouteRecordRaw[], fn: any): void => {
-  const filterRouter = (routers: RouteRecordRaw[], flag: number): RouteRecordRaw[] => {
-    return routers.filter(router => {
-      if (router.meta?.flag === flag) {
-        if (router.children && router.children.length) {
-          router.children = filterRouter(router.children, flag);
-        }
-        return true;
-      }
-    });
-  };
-  const frontMenu = filterRouter(localRouter, 1).concat(filterRouter(dynamicRouter, 1));
-  const backMenu = filterRouter(localRouter, 2).concat(filterRouter(dynamicRouter, 2));
+const formatAsideMenu = (routers: RouteRecordRaw[], flag: number): MenuVO[] => {
+  const filterRouter = filterRouterFlag(showOneChild(routers), flag);
+  return formatMenu(filterRouter);
+};
 
-  const showOneChild = (routers: RouteRecordRaw[]): RouteRecordRaw[] => {
-    // 只处理一级路由
-    return routers.map(router => {
-      if (router.children?.length === 1) {
-        const child = router.children[0] as RouteRecordRaw;
-        if (!child.children || child.children.length === 0) {
-          return child;
-        }
-      }
-      return router;
-    });
-  };
-
-  const formatMenu = (router: RouteRecordRaw[]): MenuVO[] => {
-    return router.map(router => {
-      let child: MenuVO[] = [];
+const filterRouterFlag = (routers: RouteRecordRaw[], flag: number): RouteRecordRaw[] => {
+  return routers.filter(router => {
+    if (router.meta?.flag === flag) {
       if (router.children && router.children.length) {
-        child = formatMenu(router.children);
+        router.children = filterRouterFlag(router.children, flag);
       }
-      return {
-        name: router.meta?.title || '',
-        path: router.path,
-        icon: router.meta?.icon || '',
-        children: child,
-      };
-    });
-  };
+      return true;
+    }
+  });
+};
 
-  fn(formatMenu(showOneChild(frontMenu)) as MenuVO[], formatMenu(showOneChild(backMenu)) as MenuVO[]);
+const formatMenu = (router: RouteRecordRaw[]): MenuVO[] => {
+  return router.map(router => {
+    let child: MenuVO[] = [];
+    if (router.children && router.children.length) {
+      child = formatMenu(router.children);
+    }
+    return {
+      name: router.meta?.title || '',
+      path: router.path,
+      icon: router.meta?.icon || '',
+      children: child,
+    } as MenuVO;
+  });
+};
+
+const showOneChild = (routers: RouteRecordRaw[]): RouteRecordRaw[] => {
+  // 只处理一级路由
+  return routers.map(router => {
+    if (router.children?.length === 1) {
+      const child = router.children[0] as RouteRecordRaw;
+      if (!child.children || child.children.length === 0) {
+        child.path = router.path;
+        return child;
+      }
+    }
+    return router;
+  });
 };

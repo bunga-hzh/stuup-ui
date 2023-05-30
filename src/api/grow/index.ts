@@ -18,10 +18,11 @@ export interface GrowthVO {
   sort?: number;
 }
 
-export interface CrowthItemVO {
+export interface GrowthItemVO {
   id?: number;
   growthId?: number;
   name: string;
+  code: string;
   description?: string;
   fillPeriod?: number;
   fillPeriodNum?: number;
@@ -43,14 +44,18 @@ export const delGrowth = async (id: number) => {
   return await post('/growth/del/' + id);
 };
 
-export const getGrowthItemPage = async (params: Page): Promise<ApiResult<PageResult<CrowthItemVO[]>>> => {
+export const getGrowthItemPage = async (params: Page): Promise<ApiResult<PageResult<GrowthItemVO[]>>> => {
   return await get('/growthItem/page', params);
 };
 
-export const saveOrUpdateGrowthItem = async (data: CrowthItemVO): Promise<ApiResult<number>> => {
+export const saveOrUpdateGrowthItem = async (data: GrowthItemVO): Promise<ApiResult<number>> => {
   return await post('/growthItem/saveOrUpdate', data);
 };
 
 export const delGrowthItem = async (id: number) => {
   return await del('/growthItem/del/' + id);
+};
+
+export const getUserGrowthItems = async (): Promise<ApiResult<GrowthItemVO[]>> => {
+  return await get('/growthItem/myGrowthItems');
 };

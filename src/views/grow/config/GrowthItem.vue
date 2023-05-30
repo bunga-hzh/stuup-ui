@@ -168,7 +168,7 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive, h } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
-import { GrowthTreeVO, GrowthItemVO, getGrowthItemPage, saveOrUpdateGrowthItem, delGrowthItem } from '@/api/grow/index';
+import { GrowthTreeVO, CrowthItemVO, getGrowthItemPage, saveOrUpdateGrowthItem, delGrowthItem } from '@/api/grow/index';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import Bus from '@/utils/bus';
 import { PERIOD_NAMES, CALCULATE_TYPE_NAMES } from '@/utils/dict';
@@ -206,7 +206,7 @@ const growth_list = ref<GrowthTreeVO>();
 const loading = ref<boolean>(false);
 const dialog_active = ref<boolean>(false);
 const dialog_title = ref<string>('');
-const tableData = ref<GrowthItemVO[]>();
+const tableData = ref<CrowthItemVO[]>();
 const page = ref({
   current: 1,
   size: 10,
@@ -217,7 +217,7 @@ const searchForm = ref({
   name: '',
   calculateType: undefined,
 });
-const form = ref<GrowthItemVO>({
+const form = ref<CrowthItemVO>({
   id: undefined,
   growthId: undefined,
   name: '',
@@ -266,7 +266,7 @@ const addRow = () => {
   dialog_title.value = '添加';
   dialog_active.value = true;
 };
-const updateRow = (row: GrowthItemVO) => {
+const updateRow = (row: CrowthItemVO) => {
   dialog_title.value = '修改';
   dialog_active.value = true;
   form.value.id = row.id;
@@ -284,7 +284,7 @@ const updateRow = (row: GrowthItemVO) => {
 
 const setUser = (id: number) => {};
 
-const delRow = (row: GrowthItemVO) => {
+const delRow = (row: CrowthItemVO) => {
   ElMessageBox({
     title: '删除成长项',
     message: h('p', null, [
@@ -315,7 +315,7 @@ const submitForm = async () => {
   if (!valid) return;
   loading.value = true;
   try {
-    const data = form.value as unknown as GrowthItemVO;
+    const data = form.value as unknown as CrowthItemVO;
     const res = await saveOrUpdateGrowthItem(data);
     ElMessage.success(res.message);
     dialog_active.value = false;

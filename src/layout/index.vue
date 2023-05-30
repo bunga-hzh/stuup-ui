@@ -1,5 +1,5 @@
 <template>
-  <el-container>
+  <el-container class="bunga-container">
     <el-header>
       <div class="logo">
         <img :src="logo" width="200" />
@@ -54,6 +54,8 @@ const isFold = ref<boolean>(false);
 </script>
 
 <style lang="scss" scoped>
+@include b(container);
+
 .el-container {
   width: 100%;
   height: 100%;

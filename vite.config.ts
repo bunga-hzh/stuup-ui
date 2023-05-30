@@ -20,6 +20,11 @@ const viteConfig = defineConfig(async (mode: ConfigEnv) => {
       }),
     ],
     css: {
+      preprocessorOptions: {
+        scss: {
+          additionalData: `@import "./src/styles/bem.scss";`,
+        },
+      },
       postcss: {
         plugins: [
           postcsspxtoviewport({

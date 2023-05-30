@@ -5,7 +5,7 @@ export interface MenuVO {
   oid?: number;
   pid?: number;
   name: string;
-  code: string;
+  code?: string;
   path: string;
   flag?: number;
   icon?: string;

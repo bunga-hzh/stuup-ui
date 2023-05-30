@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.1.0",
-    "@form-create/element-ui": "^3.1.21",
     "@types/js-cookie": "^3.0.3",
     "@types/nprogress": "^0.2.0",
     "axios": "^1.4.0",
@@ -27,7 +26,6 @@
     "@vitejs/plugin-vue": "^4.0.0",
     "mockjs": "^1.1.0",
     "sass": "^1.62.1",
-    "sass-loader": "^13.2.2",
     "typescript": "^4.9.3",
     "unplugin-auto-import": "^0.15.3",
     "unplugin-vue-components": "^0.24.1",
