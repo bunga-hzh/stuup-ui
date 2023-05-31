@@ -51,6 +51,13 @@ const viteConfig = defineConfig(async (mode: ConfigEnv) => {
     },
     server: {
       port: 1111,
+      proxy: {
+        '/api': {
+          target: 'http://localhost:9000/stuup_api',
+          changeOrigin: true,
+          rewrite: path => path.replace(/^\/api/, ''), //重写路径,替换/api
+        },
+      },
     },
   };
 });
