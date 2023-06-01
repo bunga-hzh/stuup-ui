@@ -98,7 +98,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import type { FormInstance } from 'element-plus';
-import { ClassVO, getClassPage } from '@/api/basic/class/index';
+import { RecHonorVO, getRecHonorPage } from '@/api/record/honor/index';
 import { GradeDictVO, getGraderList } from '@/api/basic/grade/index';
 import { LEVEL } from '@/utils/constant';
 import { LEVEL_NAMES } from '@/utils/dict';
@@ -122,7 +122,7 @@ const LEVEL_DICT = Object.entries(LEVEL_NAMES)
   });
 
 const loading = ref<boolean>(false);
-const tableData = ref<ClassVO[]>();
+const tableData = ref<RecHonorVO[]>();
 const page = ref({
   current: 1,
   size: 10,
@@ -144,7 +144,7 @@ const initGrade = async () => {
 const fetchList = async () => {
   loading.value = true;
   try {
-    const { data: res } = await getClassPage(Object.assign(page.value, searchForm.value));
+    const { data: res } = await getRecHonorPage(Object.assign(page.value, searchForm.value));
     page.value.total = res.total;
     tableData.value = res.records;
   } finally {

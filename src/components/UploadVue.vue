@@ -74,6 +74,7 @@ const submit = () => {
 };
 
 const handleSuccess: UploadProps['onSuccess'] = response => {
+  uploadRef.value.clearFiles();
   if (response.code !== 0) return ElMessage.error(response.message);
   if (response.data && response.data.length) {
     errors.value = response.data;

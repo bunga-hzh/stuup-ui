@@ -84,11 +84,11 @@
         </div>
       </el-card>
     </el-col>
-    <el-dialog v-model="dialog_active" :title="dialog_title" width="500" draggable @close="resetForm">
+    <el-dialog v-model="dialog_active" :title="dialog_title" width="40%" draggable @close="resetForm">
       <el-form ref="formRef" :model="form" :rules="rules" :disabled="loading" label-position="top">
-        <el-form-item label="所属项目" prop="growthId">
+        <el-form-item label="所属项目" prop="growthItems">
           <el-cascader
-            v-model="form.growthId"
+            v-model="form.growthItems"
             placeholder="请选择所属项目"
             clearable
             :options="growth_list"
@@ -168,7 +168,7 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive, h } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
-import { GrowthTreeVO, CrowthItemVO, getGrowthItemPage, saveOrUpdateGrowthItem, delGrowthItem } from '@/api/grow/index';
+import { GrowthTreeVO, GrowthItemVO, getGrowthItemPage, saveOrUpdateGrowthItem, delGrowthItem } from '@/api/grow/index';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import Bus from '@/utils/bus';
 import { PERIOD_NAMES, CALCULATE_TYPE_NAMES } from '@/utils/dict';
@@ -191,7 +191,7 @@ const cascaderProps = {
   label: 'name',
   value: 'id',
   children: 'children',
-  emitPath: false,
+  // emitPath: false,
   checkStrictly: true,
   expandTrigger: 'hover',
 };
@@ -206,7 +206,7 @@ const growth_list = ref<GrowthTreeVO>();
 const loading = ref<boolean>(false);
 const dialog_active = ref<boolean>(false);
 const dialog_title = ref<string>('');
-const tableData = ref<CrowthItemVO[]>();
+const tableData = ref<GrowthItemVO[]>();
 const page = ref({
   current: 1,
   size: 10,
@@ -217,9 +217,9 @@ const searchForm = ref({
   name: '',
   calculateType: undefined,
 });
-const form = ref<CrowthItemVO>({
+
+const form = ref<GrowthItemVO>({
   id: undefined,
-  growthId: undefined,
   name: '',
   code: '',
   description: '',
@@ -229,9 +229,13 @@ const form = ref<CrowthItemVO>({
   scoreUpperLimit: undefined,
   calculateType: undefined,
   score: undefined,
+  growthItems: [4],
+  firstLevelId: undefined,
+  secondLevelId: undefined,
+  threeLevelId: undefined,
 });
 const rules = reactive<FormRules>({
-  growthId: [{ required: true, message: '请选择所属项目', trigger: 'blur' }],
+  growthItems: [{ required: true, message: '请选择所属项目', trigger: 'blur' }],
   name: [{ required: true, message: '请填写项目名称', trigger: 'blur' }],
   code: [{ required: true, message: '请填写项目编号', trigger: 'blur' }],
   fillPeriod: [{ required: true, message: '请填写项目录入周期', trigger: 'blur' }],
@@ -266,11 +270,9 @@ const addRow = () => {
   dialog_title.value = '添加';
   dialog_active.value = true;
 };
-const updateRow = (row: CrowthItemVO) => {
+const updateRow = (row: GrowthItemVO) => {
   dialog_title.value = '修改';
-  dialog_active.value = true;
   form.value.id = row.id;
-  form.value.growthId = row.growthId;
   form.value.name = row.name;
   form.value.code = row.code;
   form.value.description = row.description;
@@ -280,11 +282,23 @@ const updateRow = (row: CrowthItemVO) => {
   form.value.scoreUpperLimit = row.scoreUpperLimit;
   form.value.calculateType = row.calculateType;
   form.value.score = row.score;
+  if (row.firstLevelId) {
+    form.value.growthItems.push(row.firstLevelId);
+  }
+  if (row.secondLevelId) {
+    form.value.growthItems.push(row.secondLevelId);
+  }
+  if(row.threeLevelId) {
+    form.value.growthItems.push(row.threeLevelId);
+  }
+  console.log(form.value);
+  dialog_active.value = true;
+  
 };
 
 const setUser = (id: number) => {};
 
-const delRow = (row: CrowthItemVO) => {
+const delRow = (row: GrowthItemVO) => {
   ElMessageBox({
     title: '删除成长项',
     message: h('p', null, [
@@ -314,9 +328,11 @@ const submitForm = async () => {
   const valid = await formRef.value?.validate();
   if (!valid) return;
   loading.value = true;
+  form.value.firstLevelId = form.value.growthItems[0];
+  form.value.secondLevelId = form.value.growthItems[1] || undefined;
+  form.value.threeLevelId = form.value.growthItems[2] || undefined;
   try {
-    const data = form.value as unknown as CrowthItemVO;
-    const res = await saveOrUpdateGrowthItem(data);
+    const res = await saveOrUpdateGrowthItem(form.value);
     ElMessage.success(res.message);
     dialog_active.value = false;
     fetchList();
@@ -337,6 +353,10 @@ const resetForm = () => {
     scoreUpperLimit: undefined,
     calculateType: undefined,
     score: undefined,
+    growthItems: [],
+    firstLevelId: undefined,
+    secondLevelId: undefined,
+    threeLevelId: undefined,
   };
   formRef.value?.resetFields();
 };

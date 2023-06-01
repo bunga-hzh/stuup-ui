@@ -14,7 +14,7 @@
     </el-form>
     <template #footer>
       <span class="dialog-footer">
-        <el-button>取 消</el-button>
+        <el-button @click="active = false">取 消</el-button>
         <el-button type="primary" @click="uploadRef.submit()">导入</el-button>
       </span>
     </template>

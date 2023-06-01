@@ -133,6 +133,7 @@ const queryAll = () => {
 };
 
 const addRow = () => {
+  resetForm()
   title.value = '添加成长项目';
   active.value = true;
 };

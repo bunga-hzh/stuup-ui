@@ -20,7 +20,6 @@ export interface GrowthVO {
 
 export interface GrowthItemVO {
   id?: number;
-  growthId?: number;
   name: string;
   code: string;
   description?: string;
@@ -30,6 +29,10 @@ export interface GrowthItemVO {
   scoreUpperLimit?: number;
   calculateType?: number;
   score?: number;
+  growthItems: number[];
+  firstLevelId?: number;
+  secondLevelId?: number;
+  threeLevelId?: number;
 }
 
 export const getGrowthTree = async (): Promise<ApiResult<GrowthTreeVO[]>> => {
