@@ -16,9 +16,16 @@
             <el-form ref="searchFormRef" :model="searchForm" label-width="80px">
               <el-row>
                 <el-col :sm="24" :md="12" :xl="8">
+                  <el-form-item label="学年" prop="yearId">
+                    <el-select v-model="searchForm.yearId" style="width: 100%">
+                      <el-option v-for="item in YEAR" :key="item.oid" :label="item.value" :value="item.oid" />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :sm="24" :md="12" :xl="8">
                   <el-form-item label="年级" prop="gradeId">
                     <el-select v-model="searchForm.gradeId" placeholder="请选择年级" style="width: 100%">
-                      <el-option v-for="item in GRADE_DICT" :key="item.oid" :label="item.gradeName" :value="item.oid" />
+                      <el-option v-for="item in GRADE" :key="item.oid" :label="item.gradeName" :value="item.oid" />
                     </el-select>
                   </el-form-item>
                 </el-col>
@@ -57,6 +64,7 @@
         </template>
 
         <el-table :data="tableData" border stripe v-loading="loading" empty-text="空空如也~~" style="width: 100%">
+          <el-table-column prop="yearName" label="学年" show-overflow-tooltip align="center" />
           <el-table-column prop="gradeName" label="年级" show-overflow-tooltip align="center" />
           <el-table-column prop="className" label="班级名称" show-overflow-tooltip align="center" />
           <el-table-column prop="studentName" label="学生姓名" show-overflow-tooltip align="center" />
@@ -83,25 +91,29 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import type { FormInstance } from 'element-plus';
-import { ClassVO, getClassPage } from '@/api/basic/class/index';
-import { GradeDictVO, getGraderList } from '@/api/basic/grade/index';
+import { RecLaborTimeVO, getRecLaborTimePage } from '@/api/record/labor/index';
+import { getYearList } from '@/api/basic/year/index';
+import { getGraderList } from '@/api/basic/grade/index';
 
 onMounted(() => {
+  initYear();
   initGrade();
   fetchList();
 });
 
 // 字典
-const GRADE_DICT = ref<GradeDictVO[]>();
+const YEAR = ref();
+const GRADE = ref();
 
 const loading = ref<boolean>(false);
-const tableData = ref<ClassVO[]>();
+const tableData = ref<RecLaborTimeVO[]>();
 const page = ref({
   current: 1,
   size: 10,
   total: 10,
 });
 const searchForm = ref({
+  yearId: undefined,
   gradeId: undefined,
   className: undefined,
   studentName: undefined,
@@ -110,14 +122,19 @@ const searchForm = ref({
 });
 const searchFormRef = ref<FormInstance>();
 
+const initYear = async () => {
+  const { data: res } = await getYearList();
+  YEAR.value = res;
+};
+
 const initGrade = async () => {
   const { data: res } = await getGraderList();
-  GRADE_DICT.value = res;
+  GRADE.value = res;
 };
 const fetchList = async () => {
   loading.value = true;
   try {
-    const { data: res } = await getClassPage(Object.assign(page.value, searchForm.value));
+    const { data: res } = await getRecLaborTimePage(Object.assign(page.value, searchForm.value));
     page.value.total = res.total;
     tableData.value = res.records;
   } finally {

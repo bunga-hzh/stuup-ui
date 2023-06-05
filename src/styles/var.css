@@ -1,20 +1,4 @@
 :root {
-  --layout-structure-header: 64px;
-  --layout-structure-aside: 200px;
-  --layout-structure-footer: 40px;
-  --base-font-size: 14px;
-  --base-card-gauge: 16px;
-  --base-card-radius: 8px;
-  --base-card-bg: #ffffff;
-  --header-height: 64px;
-  --footer-height: 40px;
-  --footer-font-size: 12px;
-  --side-width: 240px;
-  --main-desktop-font-size: 30px;
-  --main-pad-font-size: calc(var(--main-desktop-font-size) * 4.8 / 6);
-  --main-background: #111;
-  --screen-desktop-padding-top-bottom: 50px;
-  --screen-desktop-padding-left-right: 100px;
-  --screen-pad-padding-top-bottom: 50px;
-  --screen-pad-padding-left-right: 100px;
+  --aside-menu-background: #03aa8c;
+  --aside-menu-active-background: #058f6e;
 }

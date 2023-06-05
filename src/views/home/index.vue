@@ -1,15 +1,12 @@
 <template>
   <div class="home-contaienr">
-    <Alert scroll type="success" :icon="Bullhorn">
-      要使整个人生都过得舒适、愉快，这是不可能的，因为人类必须具备一种能应付逆境的态度。
-    </Alert>
     <div class="operation-layer">
       <div class="hint" v-show="show_hint"></div>
       <Leaderboard class="leaderboard" />
       <div class="blisters-generate-wrapper" />
       <div class="class-name">{{ className }}</div>
       <div class="flower_level">
-        <Badge
+        <div
           v-for="(item, index) in myFlower"
           :key="index"
           :disabled="item.flowerNum <= 0"
@@ -17,21 +14,25 @@
           type="success"
           class="flower-badge">
           <img :src="item.src" />
-        </Badge>
+        </div>
       </div>
-      <div class="bm-flower" />
-      <div class="cj-flower" />
-      <div class="xh-flower" />
-      <div class="bm-btn" @click="$router.push('/details')" />
-      <div class="cj-btn" />
-      <div class="xh-btn" />
+      <div class="bm-cg-flower" />
+      <div class="bm-kh-flower" />
+      <div class="cj-cg-flower" />
+      <div class="cj-kh-flower" />
+      <div class="xh-kh-flower" />
+      <div class="xh-cg-flower" />
+      <!-- <div class="bm-btn b1" />
+      <div class="cj-btn b1" />
+      <div class="xh-btn b1" /> -->
     </div>
-    <video src="src/assets/video/video-background.mp4" autoplay muted loop />
+    <video class="background-layer" :src="video" autoplay muted loop />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, onMounted, onUnmounted } from 'vue';
+import video from '@/assets/video/video-background.mp4';
 import Leaderboard from '@/components/Leaderboard/index.vue';
 const flowerIcons = import.meta.glob('@/assets/flower_icons/*', { import: 'default', eager: true });
 
@@ -80,12 +81,11 @@ const className = ref<string>('三年二班');
 const flowerObj = reactive<FlowerIconType>({});
 const myFlower = ref<FlowersType[]>();
 
-let footer: HTMLDivElement;
 let hint: HTMLDivElement;
 
 const flowers = new Map([
   [
-    'bm-flower',
+    'bm-cg-flower',
     `<h3>白梅花</h3>
      <p>异名：绿萼梅</p>
      <p>药用部位：蔷薇科植物梅的花蕾。其根（梅根）、枝（梅梗）、干燥未成熟果实（乌梅）、未成熟果实的盐渍品（白梅）、种仁（梅核仁）亦供药用。</p>
@@ -93,11 +93,15 @@ const flowers = new Map([
      <p>归经：入肝、肺二经</p>
      <p>功效：舒肝，和胃，化痰</p>
      <p>主治：治梅核气，肝胃气痛，食欲不振，头晕，瘰疬</p>
-     <p>用法与用量：内服：煎汤或入丸散。外用：敷贴</p>
+     <p>用法与用量：内服：煎汤或入丸散。外用：敷贴</p>`,
+  ],
+  [
+    'bm-kh-flower',
+    `<h3>白梅花</h3>
      <p>梅花：迎寒早开,美丽脱俗。被誉为花中“四君子”之首，因其所处环境恶劣，却仍在凌厉寒风中傲然绽放于枝头，是中华民族最有骨气的花，是民族魂代表。梅的傲骨激励着一代又一代的中国人不畏艰险、奋勇前进、百折不挠。象征正直、纯洁、坚贞、气节、谦虚的品格。</p>`,
   ],
   [
-    'cj-flower',
+    'cj-cg-flower',
     `<h3>小雏菊</h3>
      <p>雏菊属于菊花的一个类别</p>
      <p>药用菊花包含了：白菊（雏菊）；滁菊；贡菊；杭菊（杭白菊，杭黄菊）</p>
@@ -106,11 +110,15 @@ const flowers = new Map([
      <p>归经：入肺；肝经</p>
      <p>功效：疏风，清热，明目，解毒</p>
      <p>主治：治头痛，眩晕，目赤，心胸烦热，疔疮，肿毒</p>
-     <p>用法与用量：内服；泡茶或入丸散</p>
+     <p>用法与用量：内服；泡茶或入丸散</p>`,
+  ],
+  [
+    'cj-kh-flower',
+    `<h3>小雏菊</h3>
      <p>菊花：盛开在百花凋零之后，隽美多姿，素雅坚贞被称之为“傲霜之花”，受国人爱重，视为高尚情操和坚贞不屈的象征。</p>`,
   ],
   [
-    'xh-flower',
+    'xh-cg-flower',
     `<h3>西红花</h3>
      <p>药用部位：鸢尾科植物番红花花柱的上部及柱头</p>
      <p>又称“女人花”分布在南欧各国及伊朗等地，上海崇明岛成功引种。</p>
@@ -121,25 +129,28 @@ const flowers = new Map([
      <p>主治：治忧思郁结，胸膈痞闷，吐血，伤寒发狂，惊怖恍惚，妇女经闭，产后瘀血腹痛，跌扑肿痛</p>
      <p>用法用量：内服：煎汤</p>
      <p>保健用法：泡茶：每天5-7根</p>
-     <p>保健用法：泡茶：每天5-7根</p></p>
+     <p>保健用法：泡茶：每天5-7根</p>`,
+  ],
+  [
+    'xh-kh-flower',
+    `<h3>西红花</h3>
      <p>象征快乐、挂念、真心、多彩、期望和青春的喜悦`,
   ],
 ]);
 
 onMounted(() => {
+  hint = document.querySelector('.hint') as HTMLDivElement;
   initFlowers();
   setFlowers();
-  // 隐藏底部
-  footer = document.getElementById('app-footer') as HTMLDivElement;
-  hint = document.querySelector('.hint') as HTMLDivElement;
-  footer.style.display = 'none';
   const keys = Array.from(flowers.keys()) as string[];
+  console.log(keys);
+
   addShowTipsEvent(...keys);
   generateBlisters();
 });
 onUnmounted(() => {
   // 显示底部
-  footer.style.display = 'block';
+  // footer.style.display = 'block';
 });
 
 const initFlowers = () => {
@@ -147,7 +158,7 @@ const initFlowers = () => {
     const splitKey = key.split('/');
     const flowerFileName = splitKey[splitKey.length - 1];
     const flowerName = flowerFileName.split('.')[0];
-    flowerObj[flowerName as keyof FlowerIconType] = flowerIcons[key];
+    flowerObj[flowerName] = flowerIcons[key];
   }
 };
 
@@ -219,23 +230,21 @@ const generateBlisters = (): void => {
   height: 100%;
   position: relative;
   background-color: #d5d1c2;
-  overflow-x: hidden;
+  overflow: hidden;
+  user-select: none;
 
-  > video {
-    width: 1920px;
-    height: 1080px;
-    object-fit: fill;
+  .background-layer {
+    width: 100%;
+    object-fit: cover;
     z-index: -1;
   }
 
   .operation-layer {
     position: absolute;
     top: 0;
-    left: 50%;
-    transform: translateX();
-    height: 100%;
+    left: 0;
+    width: 100%;
     aspect-ratio: 16/9;
-    border: 1px solid red;
     z-index: 1;
 
     .hint {
@@ -243,6 +252,7 @@ const generateBlisters = (): void => {
       top: 0;
       left: 0;
       max-width: 400px;
+      font-size: 24px;
       background-color: rgba(136, 134, 127, 0.5);
       padding: 20px;
       margin: 0;
@@ -252,42 +262,38 @@ const generateBlisters = (): void => {
 
     .blisters-generate-wrapper {
       position: absolute;
-      top: 600px;
-      left: 600px;
-      width: 200px;
-      height: 200px;
-      border: 1px solid #eee;
+      top: 70vh;
+      left: 40vh;
+      width: 20vh;
+      height: 20vh;
     }
 
     .class-name {
       position: absolute;
       left: 50%;
-      transform: translate(-50%, 50px);
-      font-size: 32px;
+      transform: translate(-50%, 5vh);
+      font-size: 48px;
       font-family: FZShuTi;
     }
 
     .flower_level {
-      width: 250px;
-      height: 150px;
+      width: 15vw;
       position: absolute;
-      left: 50px;
-      top: 880px;
+      left: 2vw;
+      top: 80vh;
       display: flex;
-      justify-content: center;
+      justify-content: start;
       align-items: center;
       flex-wrap: wrap;
 
       .flower-badge {
         margin-left: 8px;
         > img {
-          width: 100px;
-          height: 100px;
+          width: 6vh;
+          height: 6vh;
           border-radius: 25%;
           border: 2px solid #336f3f;
           -webkit-user-drag: none;
-          box-shadow: inset 10px 10px 10px rgba(0, 0, 0, 0.5), 15px 25px 10px rgba(255, 255, 255, 0.05),
-            15px 20px 20px rgba(255, 255, 255, 0.05);
         }
       }
     }
@@ -298,47 +304,47 @@ const generateBlisters = (): void => {
       top: 0;
     }
 
-    .bm-flower {
+    .bm-cg-flower {
       position: absolute;
-      top: 760px;
-      left: 250px;
-      width: 150px;
-      height: 100px;
+      top: 70vh;
+      left: 24vh;
+      width: 10vh;
+      height: 10vh;
     }
-    .cj-flower {
+    .bm-kh-flower {
       position: absolute;
-      top: 550px;
-      left: 760px;
-      width: 130px;
-      height: 100px;
+      top: 30vh;
+      left: 0;
+      width: 30vh;
+      height: 40vh;
     }
-    .xh-flower {
+    .cj-cg-flower {
       position: absolute;
-      top: 700px;
-      left: 1360px;
-      width: 130px;
-      height: 100px;
+      top: 50vh;
+      left: 40vw;
+      width: 10vh;
+      height: 10vh;
     }
-    .bm-btn {
+    .cj-kh-flower {
       position: absolute;
-      top: 520px;
-      left: 340px;
-      width: 150px;
-      height: 150px;
+      top: 30vh;
+      left: 55vw;
+      width: 20vw;
+      height: 25vh;
     }
-    .cj-btn {
+    .xh-cg-flower {
       position: absolute;
-      top: 380px;
-      left: 860px;
-      width: 150px;
-      height: 150px;
+      top: 64vh;
+      left: 72vw;
+      width: 10vh;
+      height: 10vh;
     }
-    .xh-btn {
+    .xh-kh-flower {
       position: absolute;
-      top: 660px;
-      left: 1580px;
-      width: 150px;
-      height: 150px;
+      top: 66vh;
+      left: 65vw;
+      width: 15vw;
+      height: 20vh;
     }
   }
 }

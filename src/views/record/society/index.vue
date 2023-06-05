@@ -1,5 +1,5 @@
 <template>
-  <el-row style="margin: 20px;">
+  <el-row style="margin: 20px">
     <el-col :span="24">
       <el-card>
         <template #header>
@@ -17,29 +17,29 @@
               <el-row>
                 <el-col :sm="24" :md="12" :xl="8">
                   <el-form-item label="年级" prop="gradeId">
-                    <el-select v-model="searchForm.gradeId" placeholder="请选择年级" style="width: 100%">
-                      <el-option v-for="item in GRADE_DICT" :key="item.oid" :label="item.gradeName" :value="item.oid" />
+                    <el-select v-model="searchForm.gradeId" style="width: 100%">
+                      <el-option v-for="item in GRADE" :key="item.oid" :label="item.gradeName" :value="item.oid" />
                     </el-select>
                   </el-form-item>
                 </el-col>
                 <el-col :sm="24" :md="12" :xl="8">
                   <el-form-item label="所属班级" prop="className">
-                    <el-input v-model="searchForm.className" placeholder="请输入所属班级" />
+                    <el-input v-model="searchForm.className" />
                   </el-form-item>
                 </el-col>
                 <el-col :sm="24" :md="12" :xl="8">
                   <el-form-item label="学生姓名" prop="studentName">
-                    <el-input v-model="searchForm.studentName" placeholder="请输入学生姓名" />
+                    <el-input v-model="searchForm.studentName" />
                   </el-form-item>
                 </el-col>
                 <el-col :sm="24" :md="12" :xl="8">
                   <el-form-item label="社团名称" prop="name">
-                    <el-input v-model="searchForm.name" placeholder="请输入社团名称" />
+                    <el-input v-model="searchForm.name" />
                   </el-form-item>
                 </el-col>
                 <el-col :sm="24" :md="12" :xl="8">
                   <el-form-item label="级别" prop="level">
-                    <el-select v-model="searchForm.level" placeholder="请选择级别" style="width: 100%">
+                    <el-select v-model="searchForm.level" style="width: 100%">
                       <el-option v-for="item in LEVEL_DICT" :key="item.value" :label="item.label" :value="item.value" />
                     </el-select>
                   </el-form-item>
@@ -84,9 +84,9 @@
         <div class="page-box">
           <el-pagination
             background
-            :total="page.total"
-            v-model:current-page="page.current"
-            v-model:page-size="page.size"
+            :total="total"
+            v-model:current-page="current"
+            v-model:page-size="size"
             :page-sizes="[10, 20, 30, 50, 100]"
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
@@ -101,7 +101,7 @@
 import { ref, onMounted } from 'vue';
 import type { FormInstance } from 'element-plus';
 import { RecSocietyVO, getRecSocietyPage } from '@/api/record/society/index';
-import { GradeDictVO, getGraderList } from '@/api/basic/grade/index';
+import { getGraderList } from '@/api/basic/grade/index';
 import { LEVEL } from '@/utils/constant';
 import { LEVEL_NAMES } from '@/utils/dict';
 
@@ -111,7 +111,7 @@ onMounted(() => {
 });
 
 // 字典
-const GRADE_DICT = ref<GradeDictVO[]>();
+const GRADE = ref();
 const LEVEL_DICT = Object.entries(LEVEL_NAMES)
   .filter(([key]) => {
     return Number(key) !== LEVEL.COUNTRY && Number(key) !== LEVEL.INTERNATIONAL;
@@ -125,29 +125,35 @@ const LEVEL_DICT = Object.entries(LEVEL_NAMES)
 
 const loading = ref<boolean>(false);
 const tableData = ref<RecSocietyVO[]>();
-const page = ref({
-  current: 1,
-  size: 10,
-  total: 10,
-});
+const current = ref<number>(1);
+const size = ref<number>(10);
+const total = ref<number>(0);
 const searchForm = ref({
-  gradeId: undefined,
-  className: undefined,
-  studentName: undefined,
-  name: undefined,
-  level: undefined,
+  gradeId: void 0,
+  className: void 0,
+  studentName: void 0,
+  name: void 0,
+  level: void 0,
 });
 const searchFormRef = ref<FormInstance>();
 
 const initGrade = async () => {
   const { data: res } = await getGraderList();
-  GRADE_DICT.value = res;
+  GRADE.value = res;
 };
 const fetchList = async () => {
   loading.value = true;
   try {
-    const { data: res } = await getRecSocietyPage(Object.assign(page.value, searchForm.value));
-    page.value.total = res.total;
+    const { data: res } = await getRecSocietyPage(
+      Object.assign(
+        {
+          current: current.value,
+          size: size.value,
+        },
+        searchForm.value
+      )
+    );
+    total.value = res.total;
     tableData.value = res.records;
   } finally {
     loading.value = false;
@@ -155,11 +161,11 @@ const fetchList = async () => {
 };
 
 const handleCurrentChange = (val: number) => {
-  page.value.current = val;
+  current.value = val;
   fetchList();
 };
 const handleSizeChange = (val: number) => {
-  page.value.size = val;
+  size.value = val;
   fetchList();
 };
 </script>

@@ -1,146 +1,180 @@
 <template>
-  <el-card style="margin: 20px">
-    <template #header>
-      <div>
-        <span>申请</span>
-        <el-button class="button" text>Operation button</el-button>
-      </div>
-    </template>
-    <Space vertical>
-      <el-form :model="search" inline>
-        <el-form-item label="时间范围" prop="dateRange">
-          <el-date-picker
-            v-model="search.dateRange"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始时间"
-            end-placeholder="结束时间"
-            :size="size" />
-        </el-form-item>
-        <el-form-item action>
-          <el-button type="primary">查询</el-button>
-          <el-button>清空</el-button>
-        </el-form-item>
-      </el-form>
-      <el-table border :data="data" style="width: 100%">
-        <el-table-column prop="date" label="申请项目名称" width="180" />
-        <el-table-column prop="name" label="Name" width="180" />
-        <el-table-column fixed="right" label="Operations" width="200">
+  <div style="padding: 10px 20px">
+    <el-card style="margin: 10px 0">
+      <template #header>
+        <div class="card-header">
+          <span>年份管理</span>
+          <el-space>
+            <el-button type="primary" @click="fetchList" :loading="loading">
+              <el-icon><Search /></el-icon>
+              查询
+            </el-button>
+            <el-button @click="searchFormRef?.resetFields()">
+              <el-icon><Close /></el-icon>
+              清空
+            </el-button>
+          </el-space>
+        </div>
+      </template>
+      <el-row>
+        <el-col :span="24">
+          <el-form ref="searchFormRef" :model="searchForm">
+            <el-row>
+              <el-col :sm="24" :md="12" :xl="8">
+                <el-form-item label="项目名称" prop="yearName">
+                  <el-input v-model="searchForm.name" />
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-form>
+        </el-col>
+      </el-row>
+    </el-card>
+    <el-card>
+      <template #header>
+        <div class="card-header">
+          <el-space>
+            <el-button type="primary" @click="addRow">
+              <el-icon><Plus /></el-icon>
+              申请成长积分
+            </el-button>
+          </el-space>
+          <el-space>
+            <el-button :disabled="loading" circle @click="fetchList">
+              <el-icon><Refresh /></el-icon>
+            </el-button>
+          </el-space>
+        </div>
+      </template>
+
+      <el-table :data="tableData" border stripe v-loading="loading" empty-text="空空如也~~" style="width: 100%">
+        <el-table-column prop="name" label="申请项目名称" show-overflow-tooltip align="center" />
+        <el-table-column prop="score" label="项目成长值" show-overflow-tooltip align="center" />
+        <el-table-column prop="createTime" label="申请时间" show-overflow-tooltip align="center" />
+        <el-table-column prop="state" label="申请状态" show-overflow-tooltip align="center" />
+        <el-table-column label="操作" width="400" align="center">
           <template #default="{ row }">
-            <el-button>重新提交</el-button>
-            <el-button>详情</el-button>
-            <el-button>审核记录</el-button>
+            <el-button>提交</el-button>
+            <el-button>审核信息</el-button>
+            <el-button>修改</el-button>
+            <el-button type="danger">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
-      <div style="width: 100%; text-align: right">
-        <Pagination
-          v-model:active="current"
-          :plugins="['total', 'size', 'jump']"
-          :total="data.length"
-          :page-size="size"></Pagination>
+      <div class="page-box">
+        <el-pagination
+          background
+          :disabled="loading"
+          :total="total"
+          v-model:current-page="page.current"
+          v-model:page-size="page.size"
+          :page-sizes="[10, 20, 30, 50, 100]"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          layout="total, sizes, prev, pager, next" />
       </div>
-    </Space>
-
-    <el-dialog v-model:active="active" transfer title="申请成长积分" :width="500">
-
-        <Form :model="form" label-align="top">
-          <FormItem label="申请项目" prop="projectId">
-            <Cascader :options="project" clearable />
-          </FormItem>
-          <FormItem label="申请说明" prop="description">
-            <Textarea :max-length="1000" />
-          </FormItem>
-          <FormItem label="证明附件" prop="fileIds">
-            <Upload multiple allow-drag manual url="//jsonplaceholder.typicode.com/posts/" />
-          </FormItem>
-        </Form>
-    </el-dialog>
-  </el-card>
+    </el-card>
+  </div>
+  <el-dialog v-model="dialog_active" :title="dialog_title" width="500" draggable @close="resetForm">
+    <template #footer>
+      <el-button @click="dialog_active = false">
+        <el-icon><Close /></el-icon>
+        取消
+      </el-button>
+      <el-button type="primary" :loading="loading" @click="submitForm">
+        <el-icon><Check /></el-icon>
+        提交
+      </el-button>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue';
+import type { FormInstance, FormRules } from 'element-plus';
+import { ElMessage, ElMessageBox } from 'element-plus';
 
-const active = ref<boolean>(false);
-const current = ref<number>(1);
-const size = ref<number>(10);
-const search = reactive({});
-const form = reactive({});
-
-const project: Array<Record<string, any>> = [
-  {
-    label: '时政学习',
-    children: [
-      {
-        label: '参加时政学习(1分)',
-        value: 1,
-      },
-      {
-        label: '时政比赛(2分)',
-        value: 2,
-      },
-    ],
-  },
-  {
-    label: '各类各级比赛',
-    children: [
-      {
-        label: '国家级(4分))',
-        value: 3,
-      },
-      {
-        label: '市级(3分)',
-        value: 4,
-      },
-      {
-        label: '区级(2分)',
-        value: 4,
-      },
-      {
-        label: '校级(1分)',
-        value: 4,
-      },
-    ],
-  },
-];
-
-const columns = ref([
-  {
-    name: '申请项目名称',
-    key: 'name',
-    order: 1,
-  },
-  {
-    name: '成长值',
-    key: 'score',
-    order: 2,
-  },
-  {
-    name: '审核状态',
-    key: 'state',
-    order: 3,
-  },
-  {
-    name: '申请时间',
-    key: 'createTime',
-    order: 4,
-  },
-]);
-const data = ref([]);
-
-onMounted(() => {
-  mockData();
+const loading = ref<boolean>(false);
+const dialog_active = ref<boolean>(false);
+const dialog_title = ref<string>('');
+const tableData = ref([{}]);
+const page = ref({
+  current: 1,
+  size: 10,
 });
+const total = ref<number>(0);
+const searchForm = ref({
+  name: '',
+});
+const form = ref({});
+const rules = reactive<FormRules>({});
+const searchFormRef = ref<FormInstance>();
+const formRef = ref<FormInstance>();
 
-const mockData = (): void => {
-  for (let i = 1; i <= 1000; i++) {
-    data.value.push({
-      name: '社团活动',
-      score: '2分',
-      state: '待审核',
-      createTime: new Date(),
-    });
+const fetchList = async () => {
+  loading.value = true;
+  try {
+    // TODO
+  } finally {
+    loading.value = false;
   }
+};
+
+const handleCurrentChange = (val: number) => {
+  page.value.current = val;
+  fetchList();
+};
+const handleSizeChange = (val: number) => {
+  page.value.size = val;
+  fetchList();
+};
+
+const addRow = () => {
+  dialog_title.value = '添加';
+  dialog_active.value = true;
+};
+const updateRow = row => {
+  dialog_title.value = '修改';
+  dialog_active.value = true;
+};
+const delRow = (oid: number) => {
+  ElMessageBox.confirm('确认删除？', '删除学年', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning',
+  })
+    .then(async () => {
+      loading.value = true;
+      try {
+        // TODO
+      } finally {
+        loading.value = false;
+      }
+    })
+    .catch(() => {});
+};
+
+const submitForm = async () => {
+  if (!formRef) return;
+  const valid = await formRef.value?.validate();
+  if (!valid) return;
+  loading.value = true;
+  try {
+    // TODO
+  } finally {
+    loading.value = false;
+  }
+};
+
+const resetForm = () => {
+  form.value = {
+    yearName: '',
+    yearRange: [],
+    yearStart: '',
+    yearEnd: '',
+    lastSemester: '',
+    nextSemester: '',
+  };
+  formRef.value?.resetFields();
 };
 </script>

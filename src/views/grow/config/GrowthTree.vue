@@ -133,7 +133,7 @@ const queryAll = () => {
 };
 
 const addRow = () => {
-  resetForm()
+  resetForm();
   title.value = '添加成长项目';
   active.value = true;
 };
@@ -169,13 +169,20 @@ const delRow = () => {
     .catch(() => {});
 };
 
-const handleNodeClick = (nodeData: GrowthTreeVO) => {
+const handleNodeClick = (nodeData: GrowthTreeVO, e) => {
+  const keys = [];
   form.value.id = nodeData.id;
   form.value.pid = nodeData.pid;
   form.value.name = nodeData.name;
   form.value.description = nodeData.description;
   form.value.sort = nodeData.sort;
-  Bus.emit('node-click', nodeData.id);
+  keys.push(nodeData.id);
+  let parentNode = e.parent;
+  while (parentNode.data?.id) {
+    keys.unshift(parentNode.data?.id);
+    parentNode = parentNode.parent;
+  }
+  Bus.emit('node-click', keys);
 };
 
 const submitForm = async () => {

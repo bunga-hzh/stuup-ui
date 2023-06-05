@@ -2,7 +2,7 @@
   <el-dialog v-model="active" title="导入详情" width="60%">
     <el-auto-resizer>
       <template #default="{ width }">
-        <el-table-v2 :columns="columns" :data="data" :width="width" :height="500"/>
+        <el-table-v2 :columns="columns" :data="data" :width="width" :height="500" />
       </template>
     </el-auto-resizer>
   </el-dialog>
@@ -69,12 +69,12 @@ const searchForm = ref({
   firstLeveId: undefined,
   secondLevelId: undefined,
   threeLevelId: undefined,
-  growName: '',
+  growName: undefined,
 });
 
 const open = async (growId: number) => {
   batchCode.value = growId;
-  fetchData();
+  // fetchData();
   active.value = true;
 };
 

@@ -1,11 +1,15 @@
 <template>
-  <el-dialog v-model="active" title="导入成长项目" width="30%" center>
+  <el-dialog v-model="active" title="导入成长项目" width="30%" center @close="handleClose">
     <el-form ref="fromRef" :model="form" :disabled="loading" label-position="top">
       <el-form-item label="成长项目" prop="rec_code">
         <el-radio-group v-model="form.rec_code">
-          <el-radio v-for="item in growItems" :key="item.id" :label="item.code">
-            {{ item.name }}
-          </el-radio>
+          <el-row>
+            <el-col :span="8" v-for="item in growItems" :key="item.id">
+              <el-radio :label="item.code" border style="margin: 5px">
+                {{ item.name }}
+              </el-radio>
+            </el-col>
+          </el-row>
         </el-radio-group>
       </el-form-item>
       <el-form-item>
@@ -53,10 +57,13 @@ const open = () => {
 };
 
 const handleSuccess = () => {
+  active.value = false;
+};
+
+const handleClose = () => {
   form.rec_code = growItems.value[0].code;
+  uploadRef.value.reset();
 };
 
 defineExpose({ open });
 </script>
-
-<style scoped lang="scss"></style>

@@ -35,3 +35,7 @@ export const saveOrUpdateYear = async (data: YearVO): Promise<ApiResult<number>>
 export const delYear = async (ids: string) => {
   return await post('/year/del', { ids });
 };
+
+export const setCurrentYear = async (id: number) => {
+  return await post('/year/setCurr/' + id);
+};

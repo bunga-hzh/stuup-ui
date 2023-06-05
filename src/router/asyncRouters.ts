@@ -13,7 +13,7 @@ export default [
       {
         path: '/index',
         name: 'Index',
-        component: () => import('@/views/index.vue'),
+        component: () => import('@/views/home/index.vue'),
         meta: {
           title: '首页',
           icon: '',

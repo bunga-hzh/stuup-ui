@@ -22,8 +22,9 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
 import { useUserStore } from '@/store/modules/user';
-import { LoginForm, login, loginOut } from '@/api/login/index';
+import { LoginForm, login } from '@/api/login/index';
 import router from '@/router/index';
+import Cookies from 'js-cookie';
 import { setToken } from '@/utils/auth';
 import { ElMessage } from 'element-plus';
 
@@ -52,13 +53,8 @@ const handleLogin = async () => {
     loading.value = true;
     const res = await login(form);
     setToken(res.token as string);
-    userStore.setUserId(res.data.userId);
-    userStore.setLoginName(res.data.loginName);
-    userStore.setUserName(res.data.userName);
-    userStore.setMobile(res.data.mobile);
-    userStore.setDeptId(res.data.deptId);
-    userStore.setUserType(res.data.userType);
-    userStore.setRoleId(res.data.roleIds);
+    userStore.setUserInfo(res.data);
+    Cookies.set('user_info', JSON.stringify(res.data));
     router.push('/');
     ElMessage.success('登入成功');
   } catch {

@@ -1,5 +1,5 @@
 <template>
-  <el-menu v-bind="$attrs" :default-active="$route.path" router>
+  <el-menu v-bind="$attrs" :default-active="$route.path" unique-opened router>
     <menu-item v-for="(route, index) in routes" :key="route.path + index" :route="route" />
   </el-menu>
 </template>
@@ -15,4 +15,19 @@ type Props<T> = {
 defineProps<Props<MenuVO>>();
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss">
+.el-menu {
+  background-color: var(--aside-menu-background);
+  border: 0;
+
+  .el-menu-item,
+  .el-sub-menu__title {
+    color: white;
+  }
+
+  .el-sub-menu__title:hover,
+  .el-menu-item:hover {
+    background-color: var(--aside-menu-active-background);
+  }
+}
+</style>

@@ -1,5 +1,5 @@
 <template>
-  <base-card>
+  <el-card style="margin: 20px">
     <p>控制台</p>
     <p>控制台</p>
     <p>控制台</p>
@@ -100,7 +100,7 @@
     <p>控制台</p>
     <p>控制台</p>
     <p>控制台</p>
-  </base-card>
+  </el-card>
 </template>
 
 <script setup lang="ts"></script>

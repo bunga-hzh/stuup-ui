@@ -1,14 +1,16 @@
 import { ApiResult, get } from '@/api/api';
 import { Page, PageResult } from '@/types/global';
 
-export interface GrowRecordVO {
+export interface RecLogVO {
   id?: number;
+  yearName: string;
   firstLeveName?: string;
   secondLevelName?: string;
   threeLevelName?: string;
   growName: string;
   createTime: string;
   createUser: string;
+  batchCode: number;
 }
 
 export interface RecDefaultVO {
@@ -23,8 +25,8 @@ export interface RecDefaultVO {
   remark: string;
 }
 
-export const growthRecordPage = async (params: Page): Promise<ApiResult<PageResult<GrowRecordVO[]>>> => {
-  return await get('/recDefault/page', params);
+export const getRecLogPage = async (params: Page): Promise<ApiResult<PageResult<RecLogVO[]>>> => {
+  return await get('/recLog/page', params);
 };
 
 export const growthRecordDetails = async (

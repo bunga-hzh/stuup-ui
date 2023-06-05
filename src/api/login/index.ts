@@ -13,6 +13,7 @@ export interface LoginUserVO {
   deptId: number;
   userType: number;
   roleIds: string;
+  yearId: number;
 }
 
 export const login = async (data: LoginForm): Promise<ApiResult<LoginUserVO>> => {

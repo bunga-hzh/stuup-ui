@@ -74,7 +74,7 @@
         <div class="page-box">
           <el-pagination
             background
-            :total="page.total"
+            :total="total"
             v-model:current-page="page.current"
             v-model:page-size="page.size"
             :page-sizes="[10, 20, 30, 50, 100]"
@@ -177,8 +177,10 @@ Bus.on('get-tree', (growthTree: GrowthTreeVO) => {
   growth_list.value = growthTree;
 });
 
-Bus.on('node-click', (id: number) => {
-  growthId.value = id;
+Bus.on('node-click', (keys: number[]) => {
+  searchForm.value.firstLevelId = keys[0] || void 0;
+  searchForm.value.secondLevelId = keys[1] || void 0;
+  searchForm.value.threeLevelId = keys[2] || void 0;
   fetchList();
 });
 
@@ -210,12 +212,15 @@ const tableData = ref<GrowthItemVO[]>();
 const page = ref({
   current: 1,
   size: 10,
-  total: 10,
 });
+const total = ref<number>(0);
 const searchForm = ref({
-  id: undefined,
-  name: '',
-  calculateType: undefined,
+  firstLevelId: void 0,
+  secondLevelId: void 0,
+  threeLevelId: void 0,
+  id: void 0,
+  name: void 0,
+  calculateType: void 0,
 });
 
 const form = ref<GrowthItemVO>({
@@ -249,8 +254,8 @@ const formRef = ref<FormInstance>();
 const fetchList = async () => {
   loading.value = true;
   try {
-    const { data: res } = await getGrowthItemPage(Object.assign(page.value, searchForm.value, { growthId }));
-    page.value.total = res.total;
+    const { data: res } = await getGrowthItemPage(Object.assign(page.value, searchForm.value));
+    total.value = res.total;
     tableData.value = res.records;
   } finally {
     loading.value = false;
@@ -288,12 +293,11 @@ const updateRow = (row: GrowthItemVO) => {
   if (row.secondLevelId) {
     form.value.growthItems.push(row.secondLevelId);
   }
-  if(row.threeLevelId) {
+  if (row.threeLevelId) {
     form.value.growthItems.push(row.threeLevelId);
   }
   console.log(form.value);
   dialog_active.value = true;
-  
 };
 
 const setUser = (id: number) => {};

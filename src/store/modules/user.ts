@@ -1,33 +1,33 @@
 import { defineStore } from 'pinia';
 import { store } from '../index';
 import { storeNames } from '../store-name';
-import { LoginForm, login, loginOut } from '@/api/login/index';
-import { setToken } from '@/utils/auth';
 
 export interface UserInfoType {
-  userId: number | null;
+  userId: number | undefined;
   loginName: string;
   userName: string;
   mobile: string;
-  deptId: number | null;
-  userType: number | null;
+  deptId: number | undefined;
+  userType: number | undefined;
   roleIds: string;
+  yearId: number | undefined;
 }
 
 export const useUserStore = defineStore(storeNames.USER, {
   state: (): UserInfoType => {
     return {
-      userId: null,
+      userId: void 0,
       loginName: '',
       userName: '',
       mobile: '',
-      deptId: null,
-      userType: null,
+      deptId: void 0,
+      userType: void 0,
       roleIds: '',
+      yearId: void 0,
     };
   },
   getters: {
-    getUserId(): number | null {
+    getUserId(): number | undefined {
       return this.userId;
     },
     getLoginName(): string {
@@ -39,37 +39,33 @@ export const useUserStore = defineStore(storeNames.USER, {
     getMobile(): string {
       return this.mobile;
     },
-    getDeptId(): number | null {
+    getDeptId(): number | undefined {
       return this.deptId;
     },
-    getUserType(): number | null {
+    getUserType(): number | undefined {
       return this.userType;
     },
     getRoleId(): string {
       return this.roleIds;
     },
+    getYearId(): number | undefined {
+      return this.yearId;
+    },
   },
   actions: {
-    setUserId(userId: number | null): void {
-      this.userId = userId;
-    },
-    setLoginName(loginName: string): void {
-      this.loginName = loginName;
-    },
-    setUserName(userName: string): void {
-      this.userName = userName;
-    },
-    setMobile(mobile: string): void {
-      this.mobile = mobile;
-    },
-    setDeptId(deptId: number | null): void {
-      this.deptId = deptId;
-    },
-    setUserType(userType: number | null): void {
-      this.userType = userType;
-    },
-    setRoleId(roleIds: string): void {
-      this.roleIds = roleIds;
+    setUserInfo(userInfo: UserInfoType): void {
+      this.userId = userInfo.userId;
+      this.loginName = userInfo.loginName;
+      this.userName = userInfo.userName;
+      this.mobile = userInfo.mobile;
+      this.deptId = userInfo.deptId;
+      this.userType = userInfo.userType;
+      this.roleIds = userInfo.roleIds;
+      this.yearId = userInfo.yearId;
     },
   },
 });
+
+export const useUserStoreWithOut = () => {
+  return useUserStore(store);
+};

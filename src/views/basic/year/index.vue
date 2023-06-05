@@ -51,11 +51,12 @@
         <el-table-column prop="yearName" label="年份名称" show-overflow-tooltip align="center" />
         <el-table-column prop="yearStart" label="开始时间" show-overflow-tooltip align="center" />
         <el-table-column prop="yearEnd" label="结束时间" show-overflow-tooltip align="center" />
-        <el-table-column prop="lastSemester" label="上学期起止时间" show-overflow-tooltip align="center" />
-        <el-table-column prop="nextSemester" label="下学期起止时间" show-overflow-tooltip align="center" />
         <el-table-column prop="createTime" label="创建时间" show-overflow-tooltip align="center" />
-        <el-table-column label="操作" width="200" align="center">
+        <el-table-column label="操作" width="300" align="center">
           <template #default="{ row }">
+            <el-button :disabled="row.curr === 1" @click="setCurrent(row.oid)" :type="row.curr === 1 ? 'success' : ''">
+              {{ row.curr === 1 ? '当前学年' : '设置为当前年' }}
+            </el-button>
             <el-button @click="updateRow(row)">修改</el-button>
             <el-button @click="delRow(row.oid)" type="danger">删除</el-button>
           </template>
@@ -76,10 +77,6 @@
     </el-card>
   </div>
   <el-dialog v-model="dialog_active" :title="dialog_title" width="500" draggable @close="resetForm">
-    <el-alert
-      title="以年份开始时间时间作为上学期起始时间，年份结束时间时间作为下学期截至时间"
-      type="success"
-      show-icon />
     <el-form
       ref="formRef"
       :model="form"
@@ -100,24 +97,6 @@
           start-placeholder="开始时间"
           end-placeholder="结束时间" />
       </el-form-item>
-      <el-form-item label="上学期截至时间" prop="lastSemester">
-        <el-date-picker
-          v-model="form.lastSemester"
-          type="date"
-          placeholder="请选择上学期截至时间"
-          format="YYYY-MM-DD"
-          value-format="YYYY-MM-DD HH:mm:ss"
-          style="width: 100%" />
-      </el-form-item>
-      <el-form-item label="下学期开始时间" prop="nextSemester">
-        <el-date-picker
-          v-model="form.nextSemester"
-          type="date"
-          placeholder="请选择下学期开始时间"
-          format="YYYY-MM-DD"
-          value-format="YYYY-MM-DD HH:mm:ss"
-          style="width: 100%" />
-      </el-form-item>
     </el-form>
     <template #footer>
       <el-button @click="dialog_active = false">
@@ -135,8 +114,9 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
-import { YearVO, getYearPage, saveOrUpdateYear, delYear } from '@/api/basic/year/index';
+import { YearVO, getYearPage, saveOrUpdateYear, delYear, setCurrentYear } from '@/api/basic/year/index';
 import { ElMessage, ElMessageBox } from 'element-plus';
+import { Message } from '@element-plus/icons-vue/dist/types';
 
 onMounted(() => {
   fetchList();
@@ -188,6 +168,25 @@ const handleCurrentChange = (val: number) => {
 const handleSizeChange = (val: number) => {
   page.value.size = val;
   fetchList();
+};
+
+const setCurrent = async (id: number) => {
+  ElMessageBox.confirm('确认设置为当前年？', '设置为当前年', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning',
+  })
+    .then(async () => {
+      loading.value = true;
+      try {
+        const res = await setCurrentYear(id);
+        ElMessage.success(res.message);
+        fetchList();
+      } finally {
+        loading.value = false;
+      }
+    })
+    .catch(() => {});
 };
 
 const addRow = () => {

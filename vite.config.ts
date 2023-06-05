@@ -1,4 +1,4 @@
-import { defineConfig, loadEnv, ConfigEnv } from 'vite';
+import { defineConfig, ConfigEnv, loadEnv } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import path from 'path';
 import Components from 'unplugin-vue-components/vite';
@@ -7,9 +7,10 @@ import postcsspxtoviewport from 'postcss-px-to-viewport-update';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 
 // https://vitejs.dev/config/
-const viteConfig = defineConfig(async (mode: ConfigEnv) => {
-  const env = loadEnv(mode.mode, process.cwd());
+const viteConfig = defineConfig(async ({ command, mode }) => {
+  const env = loadEnv(mode, process.cwd(), '');
   return {
+    base: mode === 'development' ? '/' : '/stuup',
     plugins: [
       vue(),
       AutoImport({
@@ -53,7 +54,7 @@ const viteConfig = defineConfig(async (mode: ConfigEnv) => {
       port: 1111,
       proxy: {
         '/api': {
-          target: 'http://localhost:9000/stuup_api',
+          target: env.VITE_API_URL,
           changeOrigin: true,
           rewrite: path => path.replace(/^\/api/, ''), //重写路径,替换/api
         },
